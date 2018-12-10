@@ -3,12 +3,12 @@ describe('Driver API', function() {
     'use strict';
 
     beforeEach(function(done) {
-        if (localforage.supports(localforage.INDEXEDDB)) {
-            localforage.setDriver(localforage.INDEXEDDB, function() {
+        if (cryptedforage.supports(cryptedforage.INDEXEDDB)) {
+            cryptedforage.setDriver(cryptedforage.INDEXEDDB, function() {
                 done();
             });
-        } else if (localforage.supports(localforage.WEBSQL)) {
-            localforage.setDriver(localforage.WEBSQL, function() {
+        } else if (cryptedforage.supports(cryptedforage.WEBSQL)) {
+            cryptedforage.setDriver(cryptedforage.WEBSQL, function() {
                 done();
             });
         } else {
@@ -17,174 +17,186 @@ describe('Driver API', function() {
     });
 
     if (
-        (localforage.supports(localforage.INDEXEDDB) &&
-            localforage.driver() === localforage.INDEXEDDB) ||
-        (localforage.supports(localforage.WEBSQL) &&
-            localforage.driver() === localforage.WEBSQL)
+        (cryptedforage.supports(cryptedforage.INDEXEDDB) &&
+            cryptedforage.driver() === cryptedforage.INDEXEDDB) ||
+        (cryptedforage.supports(cryptedforage.WEBSQL) &&
+            cryptedforage.driver() === cryptedforage.WEBSQL)
     ) {
         it(
             'can change to localStorage from ' +
-                localforage.driver() +
+                cryptedforage.driver() +
                 ' [callback]',
             function(done) {
-                var previousDriver = localforage.driver();
+                var previousDriver = cryptedforage.driver();
 
-                localforage.setDriver(localforage.LOCALSTORAGE, function() {
-                    expect(localforage.driver()).to.be(
-                        localforage.LOCALSTORAGE
+                cryptedforage.setDriver(cryptedforage.LOCALSTORAGE, function() {
+                    expect(cryptedforage.driver()).to.be(
+                        cryptedforage.LOCALSTORAGE
                     );
-                    expect(localforage.driver()).to.not.be(previousDriver);
+                    expect(cryptedforage.driver()).to.not.be(previousDriver);
                     done();
                 });
             }
         );
         it(
             'can change to localStorage from ' +
-                localforage.driver() +
+                cryptedforage.driver() +
                 ' [promise]',
             function(done) {
-                var previousDriver = localforage.driver();
+                var previousDriver = cryptedforage.driver();
 
-                localforage
-                    .setDriver(localforage.LOCALSTORAGE)
+                cryptedforage
+                    .setDriver(cryptedforage.LOCALSTORAGE)
                     .then(function() {
-                        expect(localforage.driver()).to.be(
-                            localforage.LOCALSTORAGE
+                        expect(cryptedforage.driver()).to.be(
+                            cryptedforage.LOCALSTORAGE
                         );
-                        expect(localforage.driver()).to.not.be(previousDriver);
+                        expect(cryptedforage.driver()).to.not.be(
+                            previousDriver
+                        );
                         done();
                     });
             }
         );
     }
 
-    if (!localforage.supports(localforage.INDEXEDDB)) {
+    if (!cryptedforage.supports(cryptedforage.INDEXEDDB)) {
         it("can't use unsupported IndexedDB [callback]", function(done) {
-            var previousDriver = localforage.driver();
-            expect(previousDriver).to.not.be(localforage.INDEXEDDB);
+            var previousDriver = cryptedforage.driver();
+            expect(previousDriver).to.not.be(cryptedforage.INDEXEDDB);
 
             // These should be rejected in component builds but aren't.
             // TODO: Look into why.
-            localforage.setDriver(localforage.INDEXEDDB, null, function() {
-                expect(localforage.driver()).to.be(previousDriver);
+            cryptedforage.setDriver(cryptedforage.INDEXEDDB, null, function() {
+                expect(cryptedforage.driver()).to.be(previousDriver);
                 done();
             });
         });
         it("can't use unsupported IndexedDB [promise]", function(done) {
-            var previousDriver = localforage.driver();
-            expect(previousDriver).to.not.be(localforage.INDEXEDDB);
+            var previousDriver = cryptedforage.driver();
+            expect(previousDriver).to.not.be(cryptedforage.INDEXEDDB);
 
             // These should be rejected in component builds but aren't.
             // TODO: Look into why.
-            localforage.setDriver(localforage.INDEXEDDB).then(null, function() {
-                expect(localforage.driver()).to.be(previousDriver);
-                done();
-            });
+            cryptedforage
+                .setDriver(cryptedforage.INDEXEDDB)
+                .then(null, function() {
+                    expect(cryptedforage.driver()).to.be(previousDriver);
+                    done();
+                });
         });
     } else {
         it('can set already active IndexedDB [callback]', function(done) {
-            var previousDriver = localforage.driver();
-            expect(previousDriver).to.be(localforage.INDEXEDDB);
+            var previousDriver = cryptedforage.driver();
+            expect(previousDriver).to.be(cryptedforage.INDEXEDDB);
 
-            localforage.setDriver(localforage.INDEXEDDB, function() {
-                expect(localforage.driver()).to.be(previousDriver);
+            cryptedforage.setDriver(cryptedforage.INDEXEDDB, function() {
+                expect(cryptedforage.driver()).to.be(previousDriver);
                 done();
             });
         });
         it('can set already active IndexedDB [promise]', function(done) {
-            var previousDriver = localforage.driver();
-            expect(previousDriver).to.be(localforage.INDEXEDDB);
+            var previousDriver = cryptedforage.driver();
+            expect(previousDriver).to.be(cryptedforage.INDEXEDDB);
 
-            localforage.setDriver(localforage.INDEXEDDB).then(function() {
-                expect(localforage.driver()).to.be(previousDriver);
+            cryptedforage.setDriver(cryptedforage.INDEXEDDB).then(function() {
+                expect(cryptedforage.driver()).to.be(previousDriver);
                 done();
             });
         });
     }
 
-    if (!localforage.supports(localforage.LOCALSTORAGE)) {
+    if (!cryptedforage.supports(cryptedforage.LOCALSTORAGE)) {
         it("can't use unsupported localStorage [callback]", function(done) {
-            var previousDriver = localforage.driver();
-            expect(previousDriver).to.not.be(localforage.LOCALSTORAGE);
+            var previousDriver = cryptedforage.driver();
+            expect(previousDriver).to.not.be(cryptedforage.LOCALSTORAGE);
 
-            localforage.setDriver(localforage.LOCALSTORAGE, null, function() {
-                expect(localforage.driver()).to.be(previousDriver);
-                done();
-            });
+            cryptedforage.setDriver(
+                cryptedforage.LOCALSTORAGE,
+                null,
+                function() {
+                    expect(cryptedforage.driver()).to.be(previousDriver);
+                    done();
+                }
+            );
         });
         it("can't use unsupported localStorage [promise]", function(done) {
-            var previousDriver = localforage.driver();
-            expect(previousDriver).to.not.be(localforage.LOCALSTORAGE);
+            var previousDriver = cryptedforage.driver();
+            expect(previousDriver).to.not.be(cryptedforage.LOCALSTORAGE);
 
-            localforage
-                .setDriver(localforage.LOCALSTORAGE)
+            cryptedforage
+                .setDriver(cryptedforage.LOCALSTORAGE)
                 .then(null, function() {
-                    expect(localforage.driver()).to.be(previousDriver);
+                    expect(cryptedforage.driver()).to.be(previousDriver);
                     done();
                 });
         });
     } else if (
-        !localforage.supports(localforage.INDEXEDDB) &&
-        !localforage.supports(localforage.WEBSQL)
+        !cryptedforage.supports(cryptedforage.INDEXEDDB) &&
+        !cryptedforage.supports(cryptedforage.WEBSQL)
     ) {
         it('can set already active localStorage [callback]', function(done) {
-            var previousDriver = localforage.driver();
-            expect(previousDriver).to.be(localforage.LOCALSTORAGE);
+            var previousDriver = cryptedforage.driver();
+            expect(previousDriver).to.be(cryptedforage.LOCALSTORAGE);
 
-            localforage.setDriver(localforage.LOCALSTORAGE, function() {
-                expect(localforage.driver()).to.be(previousDriver);
+            cryptedforage.setDriver(cryptedforage.LOCALSTORAGE, function() {
+                expect(cryptedforage.driver()).to.be(previousDriver);
                 done();
             });
         });
         it('can set already active localStorage [promise]', function(done) {
-            var previousDriver = localforage.driver();
-            expect(previousDriver).to.be(localforage.LOCALSTORAGE);
+            var previousDriver = cryptedforage.driver();
+            expect(previousDriver).to.be(cryptedforage.LOCALSTORAGE);
 
-            localforage.setDriver(localforage.LOCALSTORAGE).then(function() {
-                expect(localforage.driver()).to.be(previousDriver);
-                done();
-            });
+            cryptedforage
+                .setDriver(cryptedforage.LOCALSTORAGE)
+                .then(function() {
+                    expect(cryptedforage.driver()).to.be(previousDriver);
+                    done();
+                });
         });
     }
 
-    if (!localforage.supports(localforage.WEBSQL)) {
+    if (!cryptedforage.supports(cryptedforage.WEBSQL)) {
         it("can't use unsupported WebSQL [callback]", function(done) {
-            var previousDriver = localforage.driver();
-            expect(previousDriver).to.not.be(localforage.WEBSQL);
+            var previousDriver = cryptedforage.driver();
+            expect(previousDriver).to.not.be(cryptedforage.WEBSQL);
 
-            localforage.setDriver(localforage.WEBSQL, null, function() {
-                expect(localforage.driver()).to.be(previousDriver);
+            cryptedforage.setDriver(cryptedforage.WEBSQL, null, function() {
+                expect(cryptedforage.driver()).to.be(previousDriver);
                 done();
             });
         });
         it("can't use unsupported WebSQL [promise]", function(done) {
-            var previousDriver = localforage.driver();
-            expect(previousDriver).to.not.be(localforage.WEBSQL);
+            var previousDriver = cryptedforage.driver();
+            expect(previousDriver).to.not.be(cryptedforage.WEBSQL);
 
-            localforage.setDriver(localforage.WEBSQL).then(null, function() {
-                expect(localforage.driver()).to.be(previousDriver);
-                done();
-            });
+            cryptedforage
+                .setDriver(cryptedforage.WEBSQL)
+                .then(null, function() {
+                    expect(cryptedforage.driver()).to.be(previousDriver);
+                    done();
+                });
         });
     } else {
         it('can set already active WebSQL [callback]', function(done) {
-            localforage.setDriver(localforage.WEBSQL, function() {
-                var previousDriver = localforage.driver();
-                expect(previousDriver).to.be(localforage.WEBSQL);
+            cryptedforage.setDriver(cryptedforage.WEBSQL, function() {
+                var previousDriver = cryptedforage.driver();
+                expect(previousDriver).to.be(cryptedforage.WEBSQL);
 
-                localforage.setDriver(localforage.WEBSQL, function() {
-                    expect(localforage.driver()).to.be(previousDriver);
+                cryptedforage.setDriver(cryptedforage.WEBSQL, function() {
+                    expect(cryptedforage.driver()).to.be(previousDriver);
                     done();
                 });
             });
         });
         it('can set already active WebSQL [promise]', function(done) {
-            localforage.setDriver(localforage.WEBSQL).then(function() {
-                var previousDriver = localforage.driver();
-                expect(previousDriver).to.be(localforage.WEBSQL);
+            cryptedforage.setDriver(cryptedforage.WEBSQL).then(function() {
+                var previousDriver = cryptedforage.driver();
+                expect(previousDriver).to.be(cryptedforage.WEBSQL);
 
-                localforage.setDriver(localforage.WEBSQL).then(function() {
-                    expect(localforage.driver()).to.be(previousDriver);
+                cryptedforage.setDriver(cryptedforage.WEBSQL).then(function() {
+                    expect(cryptedforage.driver()).to.be(previousDriver);
                     done();
                 });
             });

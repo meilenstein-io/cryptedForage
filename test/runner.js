@@ -53,11 +53,11 @@ var require = this.require;
 if (require) {
     requirejs.config({
         paths: {
-            localforage: '/dist/localforage'
+            cryptedforage: '/dist/cryptedforage'
         }
     });
-    require(['localforage'], function(localforage) {
-        window.localforage = localforage;
+    require(['cryptedforage'], function(cryptedforage) {
+        window.cryptedforage = cryptedforage;
 
         require([
             '/test/test.api.js',

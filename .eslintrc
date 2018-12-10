@@ -67,7 +67,7 @@
   },
   "globals": {
     "define": true,
-    "localforage": true,
+    "cryptedforage": true,
     "module": true,
     "require": true,
     "self": true,

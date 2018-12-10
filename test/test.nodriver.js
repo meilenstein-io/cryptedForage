@@ -3,38 +3,38 @@ describe('When No Drivers Are Available', function() {
     'use strict';
 
     var DRIVERS = [
-        localforage.INDEXEDDB,
-        localforage.LOCALSTORAGE,
-        localforage.WEBSQL
+        cryptedforage.INDEXEDDB,
+        cryptedforage.LOCALSTORAGE,
+        cryptedforage.WEBSQL
     ];
 
     it('agrees with Modernizr on storage drivers support', function() {
-        expect(localforage.supports(localforage.INDEXEDDB)).to.be(false);
-        expect(localforage.supports(localforage.INDEXEDDB)).to.be(
+        expect(cryptedforage.supports(cryptedforage.INDEXEDDB)).to.be(false);
+        expect(cryptedforage.supports(cryptedforage.INDEXEDDB)).to.be(
             Modernizr.indexeddb
         );
 
-        expect(localforage.supports(localforage.LOCALSTORAGE)).to.be(false);
-        expect(localforage.supports(localforage.LOCALSTORAGE)).to.be(
+        expect(cryptedforage.supports(cryptedforage.LOCALSTORAGE)).to.be(false);
+        expect(cryptedforage.supports(cryptedforage.LOCALSTORAGE)).to.be(
             Modernizr.localstorage
         );
 
-        expect(localforage.supports(localforage.WEBSQL)).to.be(false);
-        expect(localforage.supports(localforage.WEBSQL)).to.be(
+        expect(cryptedforage.supports(cryptedforage.WEBSQL)).to.be(false);
+        expect(cryptedforage.supports(cryptedforage.WEBSQL)).to.be(
             Modernizr.websqldatabase
         );
     });
 
-    it('fails to load localForage [callback]', function(done) {
-        localforage.ready(function(err) {
+    it('fails to load cryptedForage [callback]', function(done) {
+        cryptedforage.ready(function(err) {
             expect(err).to.be.an(Error);
             expect(err.message).to.be('No available storage method found.');
             done();
         });
     });
 
-    it('fails to load localForage [promise]', function(done) {
-        localforage.ready().then(null, function(err) {
+    it('fails to load cryptedForage [promise]', function(done) {
+        cryptedforage.ready().then(null, function(err) {
             expect(err).to.be.an(Error);
             expect(err.message).to.be('No available storage method found.');
             done();
@@ -42,15 +42,15 @@ describe('When No Drivers Are Available', function() {
     });
 
     it('has no driver set', function(done) {
-        localforage.ready(function() {
-            expect(localforage.driver()).to.be(null);
+        cryptedforage.ready(function() {
+            expect(cryptedforage.driver()).to.be(null);
             done();
         });
     });
 
     DRIVERS.forEach(function(driverName) {
         it('fails to setDriver ' + driverName + ' [callback]', function(done) {
-            localforage.setDriver(driverName, null, function(err) {
+            cryptedforage.setDriver(driverName, null, function(err) {
                 expect(err).to.be.an(Error);
                 expect(err.message).to.be('No available storage method found.');
                 done();
@@ -58,7 +58,7 @@ describe('When No Drivers Are Available', function() {
         });
 
         it('fails to setDriver ' + driverName + ' [promise]', function(done) {
-            localforage.setDriver(driverName).then(null, function(err) {
+            cryptedforage.setDriver(driverName).then(null, function(err) {
                 expect(err).to.be.an(Error);
                 expect(err.message).to.be('No available storage method found.');
                 done();
@@ -67,7 +67,7 @@ describe('When No Drivers Are Available', function() {
     });
 
     it('fails to setDriver using array parameter [callback]', function(done) {
-        localforage.setDriver(DRIVERS, null, function(err) {
+        cryptedforage.setDriver(DRIVERS, null, function(err) {
             expect(err).to.be.an(Error);
             expect(err.message).to.be('No available storage method found.');
             done();
@@ -75,7 +75,7 @@ describe('When No Drivers Are Available', function() {
     });
 
     it('fails to setDriver using array parameter [promise]', function(done) {
-        localforage.setDriver(DRIVERS).then(null, function(err) {
+        cryptedforage.setDriver(DRIVERS).then(null, function(err) {
             expect(err).to.be.an(Error);
             expect(err.message).to.be('No available storage method found.');
             done();

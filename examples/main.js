@@ -1,9 +1,9 @@
 requirejs.config({
     paths: {
-        localforage: './../dist/localforage'
+        cryptedforage: './../dist/cryptedforage'
     }
 });
-define(['localforage'], function(lf) {
+define(['cryptedforage'], function(lf) {
     lf.ready(function() {
         var key = 'STORE_KEY';
         var value = 'What we save offline';

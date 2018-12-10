@@ -1,5 +1,5 @@
 /*globals importScripts:true, self:true */
-importScripts('/dist/localforage.js');
+importScripts('/dist/cryptedforage.js');
 
 self.addEventListener(
     'message',
@@ -12,15 +12,15 @@ self.addEventListener(
             });
         }
 
-        localforage.setDriver(
+        cryptedforage.setDriver(
             e.data.driver,
             function() {
-                localforage
+                cryptedforage
                     .setItem(
                         'web worker',
                         e.data.value,
                         function() {
-                            localforage.getItem('web worker', function(
+                            cryptedforage.getItem('web worker', function(
                                 err,
                                 value
                             ) {

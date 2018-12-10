@@ -1,21 +1,21 @@
 /*globals importScripts:true, self:true */
-importScripts('/dist/localforage.js');
+importScripts('/dist/cryptedforage.js');
 
 self.onmessage = function(messageEvent) {
-    return localforage
+    return cryptedforage
         .setDriver(messageEvent.data.driver)
         .then(function() {
-            return localforage.setItem(
+            return cryptedforage.setItem(
                 'service worker',
                 messageEvent.data.value
             );
         })
         .then(function() {
-            return localforage.getItem('service worker');
+            return cryptedforage.getItem('service worker');
         })
         .then(function(value) {
             messageEvent.ports[0].postMessage({
-                body: value + ' using ' + localforage.driver()
+                body: value + ' using ' + cryptedforage.driver()
             });
         })
         .catch(function(error) {
@@ -29,7 +29,7 @@ self.onmessage = function(messageEvent) {
 
 self.oninstall = function(event) {
     event.waitUntil(
-        localforage
+        cryptedforage
             .setItem('service worker registration', 'serviceworker present')
             .then(function(value) {
                 console.log(value);

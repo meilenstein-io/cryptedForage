@@ -1,12 +1,12 @@
 /* global after:true, afterEach:true, before:true, beforeEach:true, describe:true, expect:true, it:true, Promise:true */
 var DRIVERS = [
-    localforage.INDEXEDDB,
-    localforage.WEBSQL,
-    localforage.LOCALSTORAGE
+    cryptedforage.INDEXEDDB,
+    cryptedforage.WEBSQL,
+    cryptedforage.LOCALSTORAGE
 ];
 
 var SUPPORTED_DRIVERS = DRIVERS.filter(function(driverName) {
-    return localforage.supports(driverName);
+    return cryptedforage.supports(driverName);
 });
 
 var driverApiMethods = [
@@ -28,20 +28,21 @@ var indexedDB =
     window.OIndexedDB ||
     window.msIndexedDB;
 
-describe('localForage API', function() {
-    // https://github.com/mozilla/localForage#working-on-localforage
+describe('cryptedForage API', function() {
+    // https://github.com/mozilla/cryptedForage#working-on-cryptedforage
     it('has Promises available', function() {
         expect(Promise).to.be.a('function');
     });
 });
 
-describe('localForage', function() {
+describe('cryptedForage', function() {
     var appropriateDriver =
-        (localforage.supports(localforage.INDEXEDDB) &&
-            localforage.INDEXEDDB) ||
-        (localforage.supports(localforage.WEBSQL) && localforage.WEBSQL) ||
-        (localforage.supports(localforage.LOCALSTORAGE) &&
-            localforage.LOCALSTORAGE);
+        (cryptedforage.supports(cryptedforage.INDEXEDDB) &&
+            cryptedforage.INDEXEDDB) ||
+        (cryptedforage.supports(cryptedforage.WEBSQL) &&
+            cryptedforage.WEBSQL) ||
+        (cryptedforage.supports(cryptedforage.LOCALSTORAGE) &&
+            cryptedforage.LOCALSTORAGE);
 
     it(
         'automatically selects the most appropriate driver (' +
@@ -49,9 +50,9 @@ describe('localForage', function() {
             ')',
         function(done) {
             this.timeout(10000);
-            localforage.ready().then(
+            cryptedforage.ready().then(
                 function() {
-                    expect(localforage.driver()).to.be(appropriateDriver);
+                    expect(cryptedforage.driver()).to.be(appropriateDriver);
                     done();
                 },
                 function(error) {
@@ -59,7 +60,7 @@ describe('localForage', function() {
                     expect(error.message).to.be(
                         'No available storage method found.'
                     );
-                    expect(localforage.driver()).to.be(null);
+                    expect(cryptedforage.driver()).to.be(null);
                     done();
                 }
             );
@@ -67,7 +68,7 @@ describe('localForage', function() {
     );
 
     it('errors when a requested driver is not found [callback]', function(done) {
-        localforage.getDriver('UnknownDriver', null, function(error) {
+        cryptedforage.getDriver('UnknownDriver', null, function(error) {
             expect(error).to.be.an(Error);
             expect(error.message).to.be('Driver not found.');
             done();
@@ -75,7 +76,7 @@ describe('localForage', function() {
     });
 
     it('errors when a requested driver is not found [promise]', function(done) {
-        localforage.getDriver('UnknownDriver').then(null, function(error) {
+        cryptedforage.getDriver('UnknownDriver').then(null, function(error) {
             expect(error).to.be.an(Error);
             expect(error.message).to.be('Driver not found.');
             done();
@@ -83,14 +84,14 @@ describe('localForage', function() {
     });
 
     it('retrieves the serializer [callback]', function(done) {
-        localforage.getSerializer(function(serializer) {
+        cryptedforage.getSerializer(function(serializer) {
             expect(serializer).to.be.an('object');
             done();
         });
     });
 
     it('retrieves the serializer [promise]', function(done) {
-        var serializerPromise = localforage.getSerializer();
+        var serializerPromise = cryptedforage.getSerializer();
         expect(serializerPromise).to.be.an('object');
         expect(serializerPromise.then).to.be.a('function');
 
@@ -102,17 +103,21 @@ describe('localForage', function() {
 
     it('does not support object parameter to setDriver', function(done) {
         var driverPreferedOrder = {
-            '0': localforage.INDEXEDDB,
-            '1': localforage.WEBSQL,
-            '2': localforage.LOCALSTORAGE,
+            '0': cryptedforage.INDEXEDDB,
+            '1': cryptedforage.WEBSQL,
+            '2': cryptedforage.LOCALSTORAGE,
             length: 3
         };
 
-        localforage.setDriver(driverPreferedOrder).then(null, function(error) {
-            expect(error).to.be.an(Error);
-            expect(error.message).to.be('No available storage method found.');
-            done();
-        });
+        cryptedforage
+            .setDriver(driverPreferedOrder)
+            .then(null, function(error) {
+                expect(error).to.be.an(Error);
+                expect(error.message).to.be(
+                    'No available storage method found.'
+                );
+                done();
+            });
     });
 
     it('skips drivers that fail to initilize', function(done) {
@@ -141,21 +146,21 @@ describe('localForage', function() {
 
         var driverPreferedOrder = [
             failingStorageDriver._driver,
-            localforage.INDEXEDDB,
-            localforage.WEBSQL,
-            localforage.LOCALSTORAGE
+            cryptedforage.INDEXEDDB,
+            cryptedforage.WEBSQL,
+            cryptedforage.LOCALSTORAGE
         ];
 
-        localforage
+        cryptedforage
             .defineDriver(failingStorageDriver)
             .then(function() {
-                return localforage.setDriver(driverPreferedOrder);
+                return cryptedforage.setDriver(driverPreferedOrder);
             })
             .then(function() {
-                return localforage.ready();
+                return cryptedforage.ready();
             })
             .then(function() {
-                expect(localforage.driver()).to.be(appropriateDriver);
+                expect(cryptedforage.driver()).to.be(appropriateDriver);
                 done();
             });
     });
@@ -181,13 +186,13 @@ describe('localForage', function() {
 
         it('does not log unnecessary messages', function() {
             var oldLogCount = console.info.logs.length;
-            var localforage2 = localforage.createInstance();
-            var localforage3 = localforage.createInstance();
+            var cryptedforage2 = cryptedforage.createInstance();
+            var cryptedforage3 = cryptedforage.createInstance();
 
             return Promise.all([
-                localforage.ready(),
-                localforage2.ready(),
-                localforage3.ready()
+                cryptedforage.ready(),
+                cryptedforage2.ready(),
+                cryptedforage3.ready()
             ]).then(function() {
                 expect(console.info.logs.length).to.be(oldLogCount);
             });
@@ -202,64 +207,64 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
         this.timeout(30000);
 
         before(function(done) {
-            localforage.setDriver(driverName).then(done);
+            cryptedforage.setDriver(driverName).then(done);
         });
 
         beforeEach(function(done) {
             localStorage.clear();
-            localforage.ready().then(function() {
-                localforage.clear(done);
+            cryptedforage.ready().then(function() {
+                cryptedforage.clear(done);
             });
         });
 
         it('has a localStorage API', function() {
-            expect(localforage.getItem).to.be.a('function');
-            expect(localforage.setItem).to.be.a('function');
-            expect(localforage.clear).to.be.a('function');
-            expect(localforage.length).to.be.a('function');
-            expect(localforage.removeItem).to.be.a('function');
-            expect(localforage.key).to.be.a('function');
+            expect(cryptedforage.getItem).to.be.a('function');
+            expect(cryptedforage.setItem).to.be.a('function');
+            expect(cryptedforage.clear).to.be.a('function');
+            expect(cryptedforage.length).to.be.a('function');
+            expect(cryptedforage.removeItem).to.be.a('function');
+            expect(cryptedforage.key).to.be.a('function');
         });
 
-        it('has the localForage API', function() {
-            expect(localforage._initStorage).to.be.a('function');
-            expect(localforage.config).to.be.a('function');
-            expect(localforage.defineDriver).to.be.a('function');
-            expect(localforage.driver).to.be.a('function');
-            expect(localforage.supports).to.be.a('function');
-            expect(localforage.iterate).to.be.a('function');
-            expect(localforage.getItem).to.be.a('function');
-            expect(localforage.setItem).to.be.a('function');
-            expect(localforage.clear).to.be.a('function');
-            expect(localforage.length).to.be.a('function');
-            expect(localforage.removeItem).to.be.a('function');
-            expect(localforage.key).to.be.a('function');
-            expect(localforage.getDriver).to.be.a('function');
-            expect(localforage.setDriver).to.be.a('function');
-            expect(localforage.ready).to.be.a('function');
-            expect(localforage.createInstance).to.be.a('function');
-            expect(localforage.getSerializer).to.be.a('function');
-            expect(localforage.dropInstance).to.be.a('function');
+        it('has the cryptedForage API', function() {
+            expect(cryptedforage._initStorage).to.be.a('function');
+            expect(cryptedforage.config).to.be.a('function');
+            expect(cryptedforage.defineDriver).to.be.a('function');
+            expect(cryptedforage.driver).to.be.a('function');
+            expect(cryptedforage.supports).to.be.a('function');
+            expect(cryptedforage.iterate).to.be.a('function');
+            expect(cryptedforage.getItem).to.be.a('function');
+            expect(cryptedforage.setItem).to.be.a('function');
+            expect(cryptedforage.clear).to.be.a('function');
+            expect(cryptedforage.length).to.be.a('function');
+            expect(cryptedforage.removeItem).to.be.a('function');
+            expect(cryptedforage.key).to.be.a('function');
+            expect(cryptedforage.getDriver).to.be.a('function');
+            expect(cryptedforage.setDriver).to.be.a('function');
+            expect(cryptedforage.ready).to.be.a('function');
+            expect(cryptedforage.createInstance).to.be.a('function');
+            expect(cryptedforage.getSerializer).to.be.a('function');
+            expect(cryptedforage.dropInstance).to.be.a('function');
         });
 
         // Make sure we don't support bogus drivers.
         it('supports ' + driverName + ' database driver', function() {
-            expect(localforage.supports(driverName) === true);
-            expect(localforage.supports('I am not a driver') === false);
+            expect(cryptedforage.supports(driverName) === true);
+            expect(cryptedforage.supports('I am not a driver') === false);
         });
 
         it('sets the right database driver', function() {
-            expect(localforage.driver() === driverName);
+            expect(cryptedforage.driver() === driverName);
         });
 
         it('has an empty length by default', function(done) {
-            localforage.length(function(err, length) {
+            cryptedforage.length(function(err, length) {
                 expect(length).to.be(0);
                 done();
             });
         });
 
-        if (driverName === localforage.INDEXEDDB) {
+        if (driverName === cryptedforage.INDEXEDDB) {
             describe('Blob support', function() {
                 var transaction;
                 var called;
@@ -267,7 +272,7 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
                 var blob = new Blob([''], { type: 'image/png' });
 
                 before(function() {
-                    db = localforage._dbInfo.db;
+                    db = cryptedforage._dbInfo.db;
                     transaction = db.transaction;
                     db.transaction = function() {
                         called += 1;
@@ -280,7 +285,7 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
                 });
 
                 it('not check for non Blob', function(done) {
-                    localforage.setItem('key', {}).then(
+                    cryptedforage.setItem('key', {}).then(
                         function() {
                             expect(called).to.be(1);
                             done();
@@ -292,7 +297,7 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
                 });
 
                 it('check for Blob', function(done) {
-                    localforage.setItem('key', blob).then(
+                    cryptedforage.setItem('key', blob).then(
                         function() {
                             expect(called).to.be.above(1);
                             done();
@@ -304,7 +309,7 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
                 });
 
                 it('check for Blob once', function(done) {
-                    localforage.setItem('key', blob).then(
+                    cryptedforage.setItem('key', blob).then(
                         function() {
                             expect(called).to.be(1);
                             done();
@@ -316,20 +321,20 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
                 });
 
                 after(function() {
-                    localforage._dbInfo.db.transaction = transaction;
+                    cryptedforage._dbInfo.db.transaction = transaction;
                 });
             });
 
             describe('recover (reconnect) from IDBDatabase InvalidStateError', function() {
                 beforeEach(function(done) {
                     Promise.all([
-                        localforage.setItem('key', 'value1'),
-                        localforage.setItem('key1', 'value1'),
-                        localforage.setItem('key2', 'value2'),
-                        localforage.setItem('key3', 'value3')
+                        cryptedforage.setItem('key', 'value1'),
+                        cryptedforage.setItem('key1', 'value1'),
+                        cryptedforage.setItem('key2', 'value2'),
+                        cryptedforage.setItem('key3', 'value3')
                     ]).then(
                         function() {
-                            localforage._dbInfo.db.close();
+                            cryptedforage._dbInfo.db.close();
                             done();
                         },
                         function(error) {
@@ -339,7 +344,7 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
                 });
 
                 it('retrieves an item from the storage', function(done) {
-                    localforage.getItem('key').then(
+                    cryptedforage.getItem('key').then(
                         function(value) {
                             expect(value).to.be('value1');
                             done();
@@ -352,9 +357,9 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
 
                 it('retrieves more than one items from the storage', function(done) {
                     Promise.all([
-                        localforage.getItem('key1'),
-                        localforage.getItem('key2'),
-                        localforage.getItem('key3')
+                        cryptedforage.getItem('key1'),
+                        cryptedforage.getItem('key2'),
+                        cryptedforage.getItem('key3')
                     ]).then(
                         function(values) {
                             expect(values).to.eql([
@@ -371,10 +376,10 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
                 });
 
                 it('stores and retrieves an item from the storage', function(done) {
-                    localforage
+                    cryptedforage
                         .setItem('key', 'value1b')
                         .then(function() {
-                            return localforage.getItem('key');
+                            return cryptedforage.getItem('key');
                         })
                         .then(
                             function(value) {
@@ -389,15 +394,15 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
 
                 it('stores and retrieves more than one items from the storage', function(done) {
                     Promise.all([
-                        localforage.setItem('key1', 'value1b'),
-                        localforage.setItem('key2', 'value2b'),
-                        localforage.setItem('key3', 'value3b')
+                        cryptedforage.setItem('key1', 'value1b'),
+                        cryptedforage.setItem('key2', 'value2b'),
+                        cryptedforage.setItem('key3', 'value3b')
                     ])
                         .then(function() {
                             return Promise.all([
-                                localforage.getItem('key1'),
-                                localforage.getItem('key2'),
-                                localforage.getItem('key3')
+                                cryptedforage.getItem('key1'),
+                                cryptedforage.getItem('key2'),
+                                cryptedforage.getItem('key3')
                             ]);
                         })
                         .then(
@@ -417,7 +422,7 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
             });
         }
 
-        if (driverName === localforage.WEBSQL) {
+        if (driverName === cryptedforage.WEBSQL) {
             describe('on QUOTA ERROR', function() {
                 var transaction;
                 var called;
@@ -440,7 +445,7 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
 
                 beforeEach(function() {
                     called = 0;
-                    db = localforage._dbInfo.db;
+                    db = cryptedforage._dbInfo.db;
                     transaction = db.transaction;
 
                     db.transaction = function(fn, errFn) {
@@ -460,7 +465,7 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
                 });
 
                 it('should retry setItem', function(done) {
-                    localforage.setItem('key', {}).then(
+                    cryptedforage.setItem('key', {}).then(
                         function() {
                             expect(called).to.be(1);
                             done();
@@ -478,25 +483,28 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
         }
 
         it('should iterate [callback]', function(done) {
-            localforage.setItem('officeX', 'InitechX', function(err, setValue) {
+            cryptedforage.setItem('officeX', 'InitechX', function(
+                err,
+                setValue
+            ) {
                 expect(setValue).to.be('InitechX');
 
-                localforage.getItem('officeX', function(err, value) {
+                cryptedforage.getItem('officeX', function(err, value) {
                     expect(value).to.be(setValue);
 
-                    localforage.setItem('officeY', 'InitechY', function(
+                    cryptedforage.setItem('officeY', 'InitechY', function(
                         err,
                         setValue
                     ) {
                         expect(setValue).to.be('InitechY');
 
-                        localforage.getItem('officeY', function(err, value) {
+                        cryptedforage.getItem('officeY', function(err, value) {
                             expect(value).to.be(setValue);
 
                             var accumulator = {};
                             var iterationNumbers = [];
 
-                            localforage.iterate(
+                            cryptedforage.iterate(
                                 function(value, key, iterationNumber) {
                                     accumulator[key] = value;
                                     iterationNumbers.push(iterationNumber);
@@ -526,24 +534,24 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
             var accumulator = {};
             var iterationNumbers = [];
 
-            return localforage
+            return cryptedforage
                 .setItem('officeX', 'InitechX')
                 .then(function(setValue) {
                     expect(setValue).to.be('InitechX');
-                    return localforage.getItem('officeX');
+                    return cryptedforage.getItem('officeX');
                 })
                 .then(function(value) {
                     expect(value).to.be('InitechX');
-                    return localforage.setItem('officeY', 'InitechY');
+                    return cryptedforage.setItem('officeY', 'InitechY');
                 })
                 .then(function(setValue) {
                     expect(setValue).to.be('InitechY');
-                    return localforage.getItem('officeY');
+                    return cryptedforage.getItem('officeY');
                 })
                 .then(function(value) {
                     expect(value).to.be('InitechY');
 
-                    return localforage.iterate(function(
+                    return cryptedforage.iterate(function(
                         value,
                         key,
                         iterationNumber
@@ -563,23 +571,26 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
         it('should break iteration with defined return value [callback]', function(done) {
             var breakCondition = 'Some value!';
 
-            localforage.setItem('officeX', 'InitechX', function(err, setValue) {
+            cryptedforage.setItem('officeX', 'InitechX', function(
+                err,
+                setValue
+            ) {
                 expect(setValue).to.be('InitechX');
 
-                localforage.getItem('officeX', function(err, value) {
+                cryptedforage.getItem('officeX', function(err, value) {
                     expect(value).to.be(setValue);
 
-                    localforage.setItem('officeY', 'InitechY', function(
+                    cryptedforage.setItem('officeY', 'InitechY', function(
                         err,
                         setValue
                     ) {
                         expect(setValue).to.be('InitechY');
 
-                        localforage.getItem('officeY', function(err, value) {
+                        cryptedforage.getItem('officeY', function(err, value) {
                             expect(value).to.be(setValue);
 
                             // Loop is broken within first iteration.
-                            localforage.iterate(
+                            cryptedforage.iterate(
                                 function() {
                                     // Returning defined value will break the cycle.
                                     return breakCondition;
@@ -601,23 +612,23 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
         it('should break iteration with defined return value [promise]', function(done) {
             var breakCondition = 'Some value!';
 
-            localforage
+            cryptedforage
                 .setItem('officeX', 'InitechX')
                 .then(function(setValue) {
                     expect(setValue).to.be('InitechX');
-                    return localforage.getItem('officeX');
+                    return cryptedforage.getItem('officeX');
                 })
                 .then(function(value) {
                     expect(value).to.be('InitechX');
-                    return localforage.setItem('officeY', 'InitechY');
+                    return cryptedforage.setItem('officeY', 'InitechY');
                 })
                 .then(function(setValue) {
                     expect(setValue).to.be('InitechY');
-                    return localforage.getItem('officeY');
+                    return cryptedforage.getItem('officeY');
                 })
                 .then(function(value) {
                     expect(value).to.be('InitechY');
-                    return localforage.iterate(function() {
+                    return cryptedforage.iterate(function() {
                         return breakCondition;
                     });
                 })
@@ -629,10 +640,10 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
 
         it('should iterate() through only its own keys/values', function(done) {
             localStorage.setItem('local', 'forage');
-            localforage
+            cryptedforage
                 .setItem('office', 'Initech')
                 .then(function() {
-                    return localforage.setItem('name', 'Bob');
+                    return cryptedforage.setItem('name', 'Bob');
                 })
                 .then(function() {
                     // Loop through all key/value pairs; {local: 'forage'} set
@@ -642,7 +653,7 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
 
                     localStorage.setItem('locals', 'forages');
 
-                    localforage.iterate(
+                    cryptedforage.iterate(
                         function(value, key, iterationNumber) {
                             expect(key).to.not.be('local');
                             expect(value).to.not.be('forage');
@@ -652,10 +663,10 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
                         function(err) {
                             if (!err) {
                                 // While there are 4 items in localStorage,
-                                // only 2 items were set using localForage.
+                                // only 2 items were set using cryptedForage.
                                 expect(numberOfItems).to.be(2);
 
-                                // Only 2 items were set using localForage,
+                                // Only 2 items were set using cryptedForage,
                                 // so we should get '12' and not '1234'
                                 expect(iterationNumberConcat).to.be('12');
 
@@ -666,11 +677,11 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
                 });
         });
 
-        // Test for https://github.com/mozilla/localForage/issues/175
+        // Test for https://github.com/mozilla/cryptedForage/issues/175
         it('nested getItem inside clear works [callback]', function(done) {
-            localforage.setItem('hello', 'Hello World !', function() {
-                localforage.clear(function() {
-                    localforage.getItem('hello', function(secondValue) {
+            cryptedforage.setItem('hello', 'Hello World !', function() {
+                cryptedforage.clear(function() {
+                    cryptedforage.getItem('hello', function(secondValue) {
                         expect(secondValue).to.be(null);
                         done();
                     });
@@ -678,13 +689,13 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
             });
         });
         it('nested getItem inside clear works [promise]', function(done) {
-            localforage
+            cryptedforage
                 .setItem('hello', 'Hello World !')
                 .then(function() {
-                    return localforage.clear();
+                    return cryptedforage.clear();
                 })
                 .then(function() {
-                    return localforage.getItem('hello');
+                    return cryptedforage.getItem('hello');
                 })
                 .then(function(secondValue) {
                     expect(secondValue).to.be(null);
@@ -693,28 +704,28 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
         });
 
         // Because localStorage doesn't support saving the `undefined` type, we
-        // always return `null` so that localForage is consistent across
+        // always return `null` so that cryptedForage is consistent across
         // browsers.
-        // https://github.com/mozilla/localForage/pull/42
+        // https://github.com/mozilla/cryptedForage/pull/42
         it('returns null for undefined key [callback]', function(done) {
-            localforage.getItem('key', function(err, value) {
+            cryptedforage.getItem('key', function(err, value) {
                 expect(value).to.be(null);
                 done();
             });
         });
 
         it('returns null for undefined key [promise]', function(done) {
-            localforage.getItem('key').then(function(value) {
+            cryptedforage.getItem('key').then(function(value) {
                 expect(value).to.be(null);
                 done();
             });
         });
 
         it('saves an item [callback]', function(done) {
-            localforage.setItem('office', 'Initech', function(err, setValue) {
+            cryptedforage.setItem('office', 'Initech', function(err, setValue) {
                 expect(setValue).to.be('Initech');
 
-                localforage.getItem('office', function(err, value) {
+                cryptedforage.getItem('office', function(err, value) {
                     expect(value).to.be(setValue);
                     done();
                 });
@@ -722,12 +733,12 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
         });
 
         it('saves an item [promise]', function(done) {
-            localforage
+            cryptedforage
                 .setItem('office', 'Initech')
                 .then(function(setValue) {
                     expect(setValue).to.be('Initech');
 
-                    return localforage.getItem('office');
+                    return cryptedforage.getItem('office');
                 })
                 .then(function(value) {
                     expect(value).to.be('Initech');
@@ -736,20 +747,20 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
         });
 
         it('saves an item over an existing key [callback]', function(done) {
-            localforage.setItem('4th floor', 'Mozilla', function(
+            cryptedforage.setItem('4th floor', 'Mozilla', function(
                 err,
                 setValue
             ) {
                 expect(setValue).to.be('Mozilla');
 
-                localforage.setItem('4th floor', 'Quora', function(
+                cryptedforage.setItem('4th floor', 'Quora', function(
                     err,
                     newValue
                 ) {
                     expect(newValue).to.not.be(setValue);
                     expect(newValue).to.be('Quora');
 
-                    localforage.getItem('4th floor', function(err, value) {
+                    cryptedforage.getItem('4th floor', function(err, value) {
                         expect(value).to.not.be(setValue);
                         expect(value).to.be(newValue);
                         done();
@@ -758,18 +769,18 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
             });
         });
         it('saves an item over an existing key [promise]', function(done) {
-            localforage
+            cryptedforage
                 .setItem('4e', 'Mozilla')
                 .then(function(setValue) {
                     expect(setValue).to.be('Mozilla');
 
-                    return localforage.setItem('4e', 'Quora');
+                    return cryptedforage.setItem('4e', 'Quora');
                 })
                 .then(function(newValue) {
                     expect(newValue).to.not.be('Mozilla');
                     expect(newValue).to.be('Quora');
 
-                    return localforage.getItem('4e');
+                    return cryptedforage.getItem('4e');
                 })
                 .then(function(value) {
                     expect(value).to.not.be('Mozilla');
@@ -779,14 +790,14 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
         });
 
         it('returns null when saving undefined [callback]', function(done) {
-            localforage.setItem('undef', undefined, function(err, setValue) {
+            cryptedforage.setItem('undef', undefined, function(err, setValue) {
                 expect(setValue).to.be(null);
 
                 done();
             });
         });
         it('returns null when saving undefined [promise]', function(done) {
-            localforage.setItem('undef', undefined).then(function(setValue) {
+            cryptedforage.setItem('undef', undefined).then(function(setValue) {
                 expect(setValue).to.be(null);
 
                 done();
@@ -794,14 +805,14 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
         });
 
         it('returns null when saving null [callback]', function(done) {
-            localforage.setItem('null', null, function(err, setValue) {
+            cryptedforage.setItem('null', null, function(err, setValue) {
                 expect(setValue).to.be(null);
 
                 done();
             });
         });
         it('returns null when saving null [promise]', function(done) {
-            localforage.setItem('null', null).then(function(setValue) {
+            cryptedforage.setItem('null', null).then(function(setValue) {
                 expect(setValue).to.be(null);
 
                 done();
@@ -809,39 +820,39 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
         });
 
         it('returns null for a non-existant key [callback]', function(done) {
-            localforage.getItem('undef', function(err, value) {
+            cryptedforage.getItem('undef', function(err, value) {
                 expect(value).to.be(null);
 
                 done();
             });
         });
         it('returns null for a non-existant key [promise]', function(done) {
-            localforage.getItem('undef').then(function(value) {
+            cryptedforage.getItem('undef').then(function(value) {
                 expect(value).to.be(null);
 
                 done();
             });
         });
 
-        // github.com/mozilla/localforage/pull/24#discussion-diff-9389662R158
+        // github.com/mozilla/cryptedforage/pull/24#discussion-diff-9389662R158
         // localStorage's method API (`localStorage.getItem('foo')`) returns
         // `null` for undefined keys, even though its getter/setter API
         // (`localStorage.foo`) returns `undefined` for the same key. Gaia's
         // asyncStorage API, which is based on localStorage and upon which
-        // localforage is based, ALSO returns `null`. BLARG! So for now, we
+        // cryptedforage is based, ALSO returns `null`. BLARG! So for now, we
         // just return null, because there's no way to know from localStorage
         // if the key is ACTUALLY `null` or undefined but returning `null`.
         // And returning `undefined` here would break compatibility with
         // localStorage fallback. Maybe in the future we won't care...
         it('returns null from an undefined key [callback]', function(done) {
-            localforage.key(0, function(err, key) {
+            cryptedforage.key(0, function(err, key) {
                 expect(key).to.be(null);
 
                 done();
             });
         });
         it('returns null from an undefined key [promise]', function(done) {
-            localforage.key(0).then(function(key) {
+            cryptedforage.key(0).then(function(key) {
                 expect(key).to.be(null);
 
                 done();
@@ -849,8 +860,8 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
         });
 
         it('returns key name [callback]', function(done) {
-            localforage.setItem('office', 'Initech').then(function() {
-                localforage.key(0, function(err, key) {
+            cryptedforage.setItem('office', 'Initech').then(function() {
+                cryptedforage.key(0, function(err, key) {
                     expect(key).to.be('office');
 
                     done();
@@ -858,10 +869,10 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
             });
         });
         it('returns key name [promise]', function(done) {
-            localforage
+            cryptedforage
                 .setItem('office', 'Initech')
                 .then(function() {
-                    return localforage.key(0);
+                    return cryptedforage.key(0);
                 })
                 .then(function(key) {
                     expect(key).to.be('office');
@@ -871,16 +882,16 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
         });
 
         it('removes an item [callback]', function(done) {
-            localforage.setItem('office', 'Initech', function() {
-                localforage.setItem('otherOffice', 'Initrode', function() {
-                    localforage.removeItem('office', function() {
-                        localforage.getItem('office', function(
+            cryptedforage.setItem('office', 'Initech', function() {
+                cryptedforage.setItem('otherOffice', 'Initrode', function() {
+                    cryptedforage.removeItem('office', function() {
+                        cryptedforage.getItem('office', function(
                             err,
                             emptyValue
                         ) {
                             expect(emptyValue).to.be(null);
 
-                            localforage.getItem('otherOffice', function(
+                            cryptedforage.getItem('otherOffice', function(
                                 err,
                                 value
                             ) {
@@ -894,21 +905,21 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
             });
         });
         it('removes an item [promise]', function(done) {
-            localforage
+            cryptedforage
                 .setItem('office', 'Initech')
                 .then(function() {
-                    return localforage.setItem('otherOffice', 'Initrode');
+                    return cryptedforage.setItem('otherOffice', 'Initrode');
                 })
                 .then(function() {
-                    return localforage.removeItem('office');
+                    return cryptedforage.removeItem('office');
                 })
                 .then(function() {
-                    return localforage.getItem('office');
+                    return cryptedforage.getItem('office');
                 })
                 .then(function(emptyValue) {
                     expect(emptyValue).to.be(null);
 
-                    return localforage.getItem('otherOffice');
+                    return cryptedforage.getItem('otherOffice');
                 })
                 .then(function(value) {
                     expect(value).to.be('Initrode');
@@ -918,16 +929,19 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
         });
 
         it('removes all items [callback]', function(done) {
-            localforage.setItem('office', 'Initech', function() {
-                localforage.setItem('otherOffice', 'Initrode', function() {
-                    localforage.length(function(err, length) {
+            cryptedforage.setItem('office', 'Initech', function() {
+                cryptedforage.setItem('otherOffice', 'Initrode', function() {
+                    cryptedforage.length(function(err, length) {
                         expect(length).to.be(2);
 
-                        localforage.clear(function() {
-                            localforage.getItem('office', function(err, value) {
+                        cryptedforage.clear(function() {
+                            cryptedforage.getItem('office', function(
+                                err,
+                                value
+                            ) {
                                 expect(value).to.be(null);
 
-                                localforage.length(function(err, length) {
+                                cryptedforage.length(function(err, length) {
                                     expect(length).to.be(0);
 
                                     done();
@@ -939,26 +953,26 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
             });
         });
         it('removes all items [promise]', function(done) {
-            localforage
+            cryptedforage
                 .setItem('office', 'Initech')
                 .then(function() {
-                    return localforage.setItem('otherOffice', 'Initrode');
+                    return cryptedforage.setItem('otherOffice', 'Initrode');
                 })
                 .then(function() {
-                    return localforage.length();
+                    return cryptedforage.length();
                 })
                 .then(function(length) {
                     expect(length).to.be(2);
 
-                    return localforage.clear();
+                    return cryptedforage.clear();
                 })
                 .then(function() {
-                    return localforage.getItem('office');
+                    return cryptedforage.getItem('office');
                 })
                 .then(function(value) {
                     expect(value).to.be(null);
 
-                    return localforage.length();
+                    return cryptedforage.length();
                 })
                 .then(function(length) {
                     expect(length).to.be(0);
@@ -967,14 +981,14 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
                 });
         });
 
-        if (driverName === localforage.LOCALSTORAGE) {
+        if (driverName === cryptedforage.LOCALSTORAGE) {
             it('removes only own items upon clear', function(done) {
                 localStorage.setItem('local', 'forage');
 
-                localforage
+                cryptedforage
                     .setItem('office', 'Initech')
                     .then(function() {
-                        return localforage.clear();
+                        return cryptedforage.clear();
                     })
                     .then(function() {
                         expect(localStorage.getItem('local')).to.be('forage');
@@ -988,10 +1002,10 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
             it('returns only its own keys from keys()', function(done) {
                 localStorage.setItem('local', 'forage');
 
-                localforage
+                cryptedforage
                     .setItem('office', 'Initech')
                     .then(function() {
-                        return localforage.keys();
+                        return cryptedforage.keys();
                     })
                     .then(function(keys) {
                         expect(keys).to.eql(['office']);
@@ -1006,10 +1020,10 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
                 localStorage.setItem('local', 'forage');
                 localStorage.setItem('another', 'value');
 
-                localforage
+                cryptedforage
                     .setItem('office', 'Initech')
                     .then(function() {
-                        return localforage.length();
+                        return cryptedforage.length();
                     })
                     .then(function(length) {
                         expect(length).to.be(1);
@@ -1022,10 +1036,10 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
         }
 
         it('has a length after saving an item [callback]', function(done) {
-            localforage.length(function(err, length) {
+            cryptedforage.length(function(err, length) {
                 expect(length).to.be(0);
-                localforage.setItem('rapper', 'Black Thought', function() {
-                    localforage.length(function(err, length) {
+                cryptedforage.setItem('rapper', 'Black Thought', function() {
+                    cryptedforage.length(function(err, length) {
                         expect(length).to.be(1);
 
                         done();
@@ -1034,15 +1048,15 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
             });
         });
         it('has a length after saving an item [promise]', function(done) {
-            localforage
+            cryptedforage
                 .length()
                 .then(function(length) {
                     expect(length).to.be(0);
 
-                    return localforage.setItem('lame rapper', 'Vanilla Ice');
+                    return cryptedforage.setItem('lame rapper', 'Vanilla Ice');
                 })
                 .then(function() {
-                    return localforage.length();
+                    return cryptedforage.length();
                 })
                 .then(function(length) {
                     expect(length).to.be(1);
@@ -1052,22 +1066,22 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
         });
 
         // Deal with non-string keys, see issue #250
-        // https://github.com/mozilla/localForage/issues/250
+        // https://github.com/mozilla/cryptedForage/issues/250
         it('casts an undefined key to a String', function(done) {
-            localforage
+            cryptedforage
                 .setItem(undefined, 'goodness!')
                 .then(function(value) {
                     expect(value).to.be('goodness!');
 
-                    return localforage.getItem(undefined);
+                    return cryptedforage.getItem(undefined);
                 })
                 .then(function(value) {
                     expect(value).to.be('goodness!');
 
-                    return localforage.removeItem(undefined);
+                    return cryptedforage.removeItem(undefined);
                 })
                 .then(function() {
-                    return localforage.length();
+                    return cryptedforage.length();
                 })
                 .then(function(length) {
                     expect(length).to.be(0);
@@ -1076,20 +1090,20 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
         });
 
         it('casts a null key to a String', function(done) {
-            localforage
+            cryptedforage
                 .setItem(null, 'goodness!')
                 .then(function(value) {
                     expect(value).to.be('goodness!');
 
-                    return localforage.getItem(null);
+                    return cryptedforage.getItem(null);
                 })
                 .then(function(value) {
                     expect(value).to.be('goodness!');
 
-                    return localforage.removeItem(null);
+                    return cryptedforage.removeItem(null);
                 })
                 .then(function() {
-                    return localforage.length();
+                    return cryptedforage.length();
                 })
                 .then(function(length) {
                     expect(length).to.be(0);
@@ -1098,20 +1112,20 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
         });
 
         it('casts a float key to a String', function(done) {
-            localforage
+            cryptedforage
                 .setItem(537.35737, 'goodness!')
                 .then(function(value) {
                     expect(value).to.be('goodness!');
 
-                    return localforage.getItem(537.35737);
+                    return cryptedforage.getItem(537.35737);
                 })
                 .then(function(value) {
                     expect(value).to.be('goodness!');
 
-                    return localforage.removeItem(537.35737);
+                    return cryptedforage.removeItem(537.35737);
                 })
                 .then(function() {
-                    return localforage.length();
+                    return cryptedforage.length();
                 })
                 .then(function(length) {
                     expect(length).to.be(0);
@@ -1120,7 +1134,7 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
         });
 
         it('is retrieved by getDriver [callback]', function(done) {
-            localforage.getDriver(driverName, function(driver) {
+            cryptedforage.getDriver(driverName, function(driver) {
                 expect(typeof driver).to.be('object');
                 driverApiMethods
                     .concat('_initStorage')
@@ -1133,7 +1147,7 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
         });
 
         it('is retrieved by getDriver [promise]', function(done) {
-            localforage.getDriver(driverName).then(function(driver) {
+            cryptedforage.getDriver(driverName).then(function(driver) {
                 expect(typeof driver).to.be('object');
                 driverApiMethods
                     .concat('_initStorage')
@@ -1146,12 +1160,12 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
         });
 
         if (
-            driverName === localforage.WEBSQL ||
-            driverName === localforage.LOCALSTORAGE
+            driverName === cryptedforage.WEBSQL ||
+            driverName === cryptedforage.LOCALSTORAGE
         ) {
             it('exposes the serializer on the dbInfo object', function(done) {
-                localforage.ready().then(function() {
-                    expect(localforage._dbInfo.serializer).to.be.an('object');
+                cryptedforage.ready().then(function() {
+                    expect(cryptedforage._dbInfo.serializer).to.be.an('object');
                     done();
                 });
             });
@@ -1160,8 +1174,8 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
 
     function prepareStorage(storageName) {
         // Delete IndexedDB storages (start from scratch)
-        // Refers to issue #492 - https://github.com/mozilla/localForage/issues/492
-        if (driverName === localforage.INDEXEDDB) {
+        // Refers to issue #492 - https://github.com/mozilla/cryptedForage/issues/492
+        if (driverName === cryptedforage.INDEXEDDB) {
             return new Promise(function(resolve) {
                 indexedDB.deleteDatabase(storageName).onsuccess = resolve;
             });
@@ -1176,12 +1190,12 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
 
         this.timeout(30000);
 
-        var localforage2 = null;
-        var localforage3 = null;
+        var cryptedforage2 = null;
+        var cryptedforage3 = null;
 
         before(function(done) {
             prepareStorage('storage2').then(function() {
-                localforage2 = localforage.createInstance({
+                cryptedforage2 = cryptedforage.createInstance({
                     name: 'storage2',
                     // We need a small value here
                     // otherwise local PhantomJS test
@@ -1193,7 +1207,7 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
 
                 // Same name, but different storeName since this has been
                 // malfunctioning before w/ IndexedDB.
-                localforage3 = localforage.createInstance({
+                cryptedforage3 = cryptedforage.createInstance({
                     name: 'storage2',
                     // We need a small value here
                     // otherwise local PhantomJS test
@@ -1204,9 +1218,9 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
                 });
 
                 Promise.all([
-                    localforage.setDriver(driverName),
-                    localforage2.setDriver(driverName),
-                    localforage3.setDriver(driverName)
+                    cryptedforage.setDriver(driverName),
+                    cryptedforage2.setDriver(driverName),
+                    cryptedforage3.setDriver(driverName)
                 ]).then(function() {
                     done();
                 });
@@ -1215,9 +1229,9 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
 
         beforeEach(function(done) {
             Promise.all([
-                localforage.clear(),
-                localforage2.clear(),
-                localforage3.clear()
+                cryptedforage.clear(),
+                cryptedforage2.clear(),
+                cryptedforage3.clear()
             ]).then(function() {
                 done();
             });
@@ -1225,22 +1239,22 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
 
         it('is not be able to access values of other instances', function(done) {
             Promise.all([
-                localforage.setItem('key1', 'value1a'),
-                localforage2.setItem('key2', 'value2a'),
-                localforage3.setItem('key3', 'value3a')
+                cryptedforage.setItem('key1', 'value1a'),
+                cryptedforage2.setItem('key2', 'value2a'),
+                cryptedforage3.setItem('key3', 'value3a')
             ])
                 .then(function() {
                     return Promise.all([
-                        localforage.getItem('key2').then(function(value) {
+                        cryptedforage.getItem('key2').then(function(value) {
                             expect(value).to.be(null);
                         }),
-                        localforage2.getItem('key1').then(function(value) {
+                        cryptedforage2.getItem('key1').then(function(value) {
                             expect(value).to.be(null);
                         }),
-                        localforage2.getItem('key3').then(function(value) {
+                        cryptedforage2.getItem('key3').then(function(value) {
                             expect(value).to.be(null);
                         }),
-                        localforage3.getItem('key2').then(function(value) {
+                        cryptedforage3.getItem('key2').then(function(value) {
                             expect(value).to.be(null);
                         })
                     ]);
@@ -1257,19 +1271,19 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
 
         it('retrieves the proper value when using the same key with other instances', function(done) {
             Promise.all([
-                localforage.setItem('key', 'value1'),
-                localforage2.setItem('key', 'value2'),
-                localforage3.setItem('key', 'value3')
+                cryptedforage.setItem('key', 'value1'),
+                cryptedforage2.setItem('key', 'value2'),
+                cryptedforage3.setItem('key', 'value3')
             ])
                 .then(function() {
                     return Promise.all([
-                        localforage.getItem('key').then(function(value) {
+                        cryptedforage.getItem('key').then(function(value) {
                             expect(value).to.be('value1');
                         }),
-                        localforage2.getItem('key').then(function(value) {
+                        cryptedforage2.getItem('key').then(function(value) {
                             expect(value).to.be('value2');
                         }),
-                        localforage3.getItem('key').then(function(value) {
+                        cryptedforage3.getItem('key').then(function(value) {
                             expect(value).to.be('value3');
                         })
                     ]);
@@ -1285,7 +1299,7 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
         });
     });
 
-    // Refers to issue #492 - https://github.com/mozilla/localForage/issues/492
+    // Refers to issue #492 - https://github.com/mozilla/cryptedForage/issues/492
     describe(
         driverName + ' driver multiple instances (concurrent on same database)',
         function() {
@@ -1303,46 +1317,46 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
             });
 
             it('chains operation on multiple stores', function() {
-                var localforage1 = localforage.createInstance({
+                var cryptedforage1 = cryptedforage.createInstance({
                     name: 'storage3',
                     storeName: 'store1',
                     size: 1024
                 });
 
-                var localforage2 = localforage.createInstance({
+                var cryptedforage2 = cryptedforage.createInstance({
                     name: 'storage3',
                     storeName: 'store2',
                     size: 1024
                 });
 
-                var localforage3 = localforage.createInstance({
+                var cryptedforage3 = cryptedforage.createInstance({
                     name: 'storage3',
                     storeName: 'store3',
                     size: 1024
                 });
 
-                var promise1 = localforage1
+                var promise1 = cryptedforage1
                     .setItem('key', 'value1')
                     .then(function() {
-                        return localforage1.getItem('key');
+                        return cryptedforage1.getItem('key');
                     })
                     .then(function(value) {
                         expect(value).to.be('value1');
                     });
 
-                var promise2 = localforage2
+                var promise2 = cryptedforage2
                     .setItem('key', 'value2')
                     .then(function() {
-                        return localforage2.getItem('key');
+                        return cryptedforage2.getItem('key');
                     })
                     .then(function(value) {
                         expect(value).to.be('value2');
                     });
 
-                var promise3 = localforage3
+                var promise3 = cryptedforage3
                     .setItem('key', 'value3')
                     .then(function() {
-                        return localforage3.getItem('key');
+                        return cryptedforage3.getItem('key');
                     })
                     .then(function(value) {
                         expect(value).to.be('value3');
@@ -1352,62 +1366,62 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
             });
 
             it('can create multiple instances of the same store', function() {
-                var localforage1;
-                var localforage2;
-                var localforage3;
+                var cryptedforage1;
+                var cryptedforage2;
+                var cryptedforage3;
 
                 Promise.resolve()
                     .then(function() {
-                        localforage1 = localforage.createInstance({
+                        cryptedforage1 = cryptedforage.createInstance({
                             name: 'commonStorage',
                             storeName: 'commonStore',
                             size: 1024
                         });
-                        return localforage1.ready();
+                        return cryptedforage1.ready();
                     })
                     .then(function() {
-                        localforage2 = localforage.createInstance({
+                        cryptedforage2 = cryptedforage.createInstance({
                             name: 'commonStorage',
                             storeName: 'commonStore',
                             size: 1024
                         });
-                        return localforage2.ready();
+                        return cryptedforage2.ready();
                     })
                     .then(function() {
-                        localforage3 = localforage.createInstance({
+                        cryptedforage3 = cryptedforage.createInstance({
                             name: 'commonStorage',
                             storeName: 'commonStore',
                             size: 1024
                         });
-                        return localforage3.ready();
+                        return cryptedforage3.ready();
                     })
                     .then(function() {
                         return Promise.resolve()
                             .then(function() {
-                                return localforage1
+                                return cryptedforage1
                                     .setItem('key1', 'value1')
                                     .then(function() {
-                                        return localforage1.getItem('key1');
+                                        return cryptedforage1.getItem('key1');
                                     })
                                     .then(function(value) {
                                         expect(value).to.be('value1');
                                     });
                             })
                             .then(function() {
-                                return localforage2
+                                return cryptedforage2
                                     .setItem('key2', 'value2')
                                     .then(function() {
-                                        return localforage2.getItem('key2');
+                                        return cryptedforage2.getItem('key2');
                                     })
                                     .then(function(value) {
                                         expect(value).to.be('value2');
                                     });
                             })
                             .then(function() {
-                                return localforage3
+                                return cryptedforage3
                                     .setItem('key3', 'value3')
                                     .then(function() {
-                                        return localforage3.getItem('key3');
+                                        return cryptedforage3.getItem('key3');
                                     })
                                     .then(function(value) {
                                         expect(value).to.be('value3');
@@ -1417,76 +1431,76 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
             });
 
             it('can create multiple instances of the same store and do concurrent operations', function() {
-                var localforage1;
-                var localforage2;
-                var localforage3;
-                var localforage3b;
+                var cryptedforage1;
+                var cryptedforage2;
+                var cryptedforage3;
+                var cryptedforage3b;
 
                 Promise.resolve()
                     .then(function() {
-                        localforage1 = localforage.createInstance({
+                        cryptedforage1 = cryptedforage.createInstance({
                             name: 'commonStorage2',
                             storeName: 'commonStore',
                             size: 1024
                         });
-                        return localforage1.ready();
+                        return cryptedforage1.ready();
                     })
                     .then(function() {
-                        localforage2 = localforage.createInstance({
+                        cryptedforage2 = cryptedforage.createInstance({
                             name: 'commonStorage2',
                             storeName: 'commonStore',
                             size: 1024
                         });
-                        return localforage2.ready();
+                        return cryptedforage2.ready();
                     })
                     .then(function() {
-                        localforage3 = localforage.createInstance({
+                        cryptedforage3 = cryptedforage.createInstance({
                             name: 'commonStorage2',
                             storeName: 'commonStore',
                             size: 1024
                         });
-                        return localforage3.ready();
+                        return cryptedforage3.ready();
                     })
                     .then(function() {
-                        localforage3b = localforage.createInstance({
+                        cryptedforage3b = cryptedforage.createInstance({
                             name: 'commonStorage2',
                             storeName: 'commonStore',
                             size: 1024
                         });
-                        return localforage3b.ready();
+                        return cryptedforage3b.ready();
                     })
                     .then(function() {
-                        var promise1 = localforage1
+                        var promise1 = cryptedforage1
                             .setItem('key1', 'value1')
                             .then(function() {
-                                return localforage1.getItem('key1');
+                                return cryptedforage1.getItem('key1');
                             })
                             .then(function(value) {
                                 expect(value).to.be('value1');
                             });
 
-                        var promise2 = localforage2
+                        var promise2 = cryptedforage2
                             .setItem('key2', 'value2')
                             .then(function() {
-                                return localforage2.getItem('key2');
+                                return cryptedforage2.getItem('key2');
                             })
                             .then(function(value) {
                                 expect(value).to.be('value2');
                             });
 
-                        var promise3 = localforage3
+                        var promise3 = cryptedforage3
                             .setItem('key3', 'value3')
                             .then(function() {
-                                return localforage3.getItem('key3');
+                                return cryptedforage3.getItem('key3');
                             })
                             .then(function(value) {
                                 expect(value).to.be('value3');
                             });
 
-                        var promise4 = localforage3b
+                        var promise4 = cryptedforage3b
                             .setItem('key3', 'value3')
                             .then(function() {
-                                return localforage3.getItem('key3');
+                                return cryptedforage3.getItem('key3');
                             })
                             .then(function(value) {
                                 expect(value).to.be('value3');
@@ -1502,61 +1516,61 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
             });
 
             it('can create multiple instances of the same store concurrently', function() {
-                var localforage1 = localforage.createInstance({
+                var cryptedforage1 = cryptedforage.createInstance({
                     name: 'commonStorage3',
                     storeName: 'commonStore',
                     size: 1024
                 });
 
-                var localforage2 = localforage.createInstance({
+                var cryptedforage2 = cryptedforage.createInstance({
                     name: 'commonStorage3',
                     storeName: 'commonStore',
                     size: 1024
                 });
 
-                var localforage3 = localforage.createInstance({
+                var cryptedforage3 = cryptedforage.createInstance({
                     name: 'commonStorage3',
                     storeName: 'commonStore',
                     size: 1024
                 });
 
-                var localforage3b = localforage.createInstance({
+                var cryptedforage3b = cryptedforage.createInstance({
                     name: 'commonStorage3',
                     storeName: 'commonStore',
                     size: 1024
                 });
 
-                var promise1 = localforage1
+                var promise1 = cryptedforage1
                     .setItem('key1', 'value1')
                     .then(function() {
-                        return localforage1.getItem('key1');
+                        return cryptedforage1.getItem('key1');
                     })
                     .then(function(value) {
                         expect(value).to.be('value1');
                     });
 
-                var promise2 = localforage2
+                var promise2 = cryptedforage2
                     .setItem('key2', 'value2')
                     .then(function() {
-                        return localforage2.getItem('key2');
+                        return cryptedforage2.getItem('key2');
                     })
                     .then(function(value) {
                         expect(value).to.be('value2');
                     });
 
-                var promise3 = localforage3
+                var promise3 = cryptedforage3
                     .setItem('key3', 'value3')
                     .then(function() {
-                        return localforage3.getItem('key3');
+                        return cryptedforage3.getItem('key3');
                     })
                     .then(function(value) {
                         expect(value).to.be('value3');
                     });
 
-                var promise4 = localforage3b
+                var promise4 = cryptedforage3b
                     .setItem('key3', 'value3')
                     .then(function() {
-                        return localforage3.getItem('key3');
+                        return cryptedforage3.getItem('key3');
                     })
                     .then(function(value) {
                         expect(value).to.be('value3');
@@ -1577,14 +1591,14 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
             // and after the target driver
             driverPreferedOrder = ['I am a not supported driver'];
 
-            if (!localforage.supports(localforage.WEBSQL)) {
-                driverPreferedOrder.push(localforage.WEBSQL);
+            if (!cryptedforage.supports(cryptedforage.WEBSQL)) {
+                driverPreferedOrder.push(cryptedforage.WEBSQL);
             }
-            if (!localforage.supports(localforage.INDEXEDDB)) {
-                driverPreferedOrder.push(localforage.INDEXEDDB);
+            if (!cryptedforage.supports(cryptedforage.INDEXEDDB)) {
+                driverPreferedOrder.push(cryptedforage.INDEXEDDB);
             }
-            if (!localforage.supports(localforage.LOCALSTORAGE)) {
-                driverPreferedOrder.push(localforage.localStorage);
+            if (!cryptedforage.supports(cryptedforage.LOCALSTORAGE)) {
+                driverPreferedOrder.push(cryptedforage.localStorage);
             }
 
             driverPreferedOrder.push(driverName);
@@ -1593,8 +1607,8 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
         });
 
         it('is used according to setDriver preference order', function(done) {
-            localforage.setDriver(driverPreferedOrder).then(function() {
-                expect(localforage.driver()).to.be(driverName);
+            cryptedforage.setDriver(driverPreferedOrder).then(function() {
+                expect(cryptedforage.driver()).to.be(driverName);
                 done();
             });
         });
@@ -1619,14 +1633,16 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
             });
 
             it('resolves the promise of getItem()', function(done) {
-                localforage.getItem('key', testObj.throwFunc).then(function() {
-                    expect(testObj.throwFuncCalls).to.be(1);
-                    done();
-                });
+                cryptedforage
+                    .getItem('key', testObj.throwFunc)
+                    .then(function() {
+                        expect(testObj.throwFuncCalls).to.be(1);
+                        done();
+                    });
             });
 
             it('resolves the promise of setItem()', function(done) {
-                localforage
+                cryptedforage
                     .setItem('key', 'test', testObj.throwFunc)
                     .then(function() {
                         expect(testObj.throwFuncCalls).to.be(1);
@@ -1635,21 +1651,21 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
             });
 
             it('resolves the promise of clear()', function(done) {
-                localforage.clear(testObj.throwFunc).then(function() {
+                cryptedforage.clear(testObj.throwFunc).then(function() {
                     expect(testObj.throwFuncCalls).to.be(1);
                     done();
                 });
             });
 
             it('resolves the promise of length()', function(done) {
-                localforage.length(testObj.throwFunc).then(function() {
+                cryptedforage.length(testObj.throwFunc).then(function() {
                     expect(testObj.throwFuncCalls).to.be(1);
                     done();
                 });
             });
 
             it('resolves the promise of removeItem()', function(done) {
-                localforage
+                cryptedforage
                     .removeItem('key', testObj.throwFunc)
                     .then(function() {
                         expect(testObj.throwFuncCalls).to.be(1);
@@ -1658,14 +1674,14 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
             });
 
             it('resolves the promise of key()', function(done) {
-                localforage.key('key', testObj.throwFunc).then(function() {
+                cryptedforage.key('key', testObj.throwFunc).then(function() {
                     expect(testObj.throwFuncCalls).to.be(1);
                     done();
                 });
             });
 
             it('resolves the promise of keys()', function(done) {
-                localforage.keys(testObj.throwFunc).then(function() {
+                cryptedforage.keys(testObj.throwFunc).then(function() {
                     expect(testObj.throwFuncCalls).to.be(1);
                     done();
                 });
@@ -1681,22 +1697,22 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
         var _oldReady;
 
         beforeEach(function(done) {
-            _oldReady = localforage.ready;
-            localforage.ready = function() {
+            _oldReady = cryptedforage.ready;
+            cryptedforage.ready = function() {
                 return Promise.reject();
             };
             done();
         });
 
         afterEach(function(done) {
-            localforage.ready = _oldReady;
+            cryptedforage.ready = _oldReady;
             _oldReady = null;
             done();
         });
 
         driverApiMethods.forEach(function(methodName) {
             it('rejects ' + methodName + '() promise', function(done) {
-                localforage[methodName]().then(null, function(/*err*/) {
+                cryptedforage[methodName]().then(null, function(/*err*/) {
                     done();
                 });
             });
@@ -1707,7 +1723,7 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
 DRIVERS.forEach(function(driverName) {
     describe(driverName + ' driver instance', function() {
         it('creates a new instance and sets the driver', function(done) {
-            var localforage2 = localforage.createInstance({
+            var cryptedforage2 = cryptedforage.createInstance({
                 name: 'storage2',
                 driver: driverName,
                 // We need a small value here
@@ -1721,13 +1737,13 @@ DRIVERS.forEach(function(driverName) {
             // since config actually uses setDriver which is async,
             // and since driver() and supports() are not defered (are sync),
             // we have to wait till an async method returns
-            localforage2.length().then(
+            cryptedforage2.length().then(
                 function() {
-                    expect(localforage2.driver()).to.be(driverName);
+                    expect(cryptedforage2.driver()).to.be(driverName);
                     done();
                 },
                 function() {
-                    expect(localforage2.driver()).to.be(null);
+                    expect(cryptedforage2.driver()).to.be(null);
                     done();
                 }
             );
@@ -1804,27 +1820,31 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
         });
 
         before(function() {
-            nodropInstance = localforage.createInstance(nodropInstanceOptions);
-            dropStoreInstance1 = localforage.createInstance(
+            nodropInstance = cryptedforage.createInstance(
+                nodropInstanceOptions
+            );
+            dropStoreInstance1 = cryptedforage.createInstance(
                 dropStoreInstance1Options
             );
-            dropStoreInstance2 = localforage.createInstance(
+            dropStoreInstance2 = cryptedforage.createInstance(
                 dropStoreInstance2Options
             );
-            dropStoreInstance3 = localforage.createInstance(
+            dropStoreInstance3 = cryptedforage.createInstance(
                 dropStoreInstance3Options
             );
-            dropDbInstance = localforage.createInstance(dropDbInstanceOptions);
-            dropDb2Instance = localforage.createInstance(
+            dropDbInstance = cryptedforage.createInstance(
+                dropDbInstanceOptions
+            );
+            dropDb2Instance = cryptedforage.createInstance(
                 dropDb2InstanceOptions
             );
-            dropDb3Instance1 = localforage.createInstance(
+            dropDb3Instance1 = cryptedforage.createInstance(
                 dropDb3Instance1Options
             );
-            dropDb3Instance2 = localforage.createInstance(
+            dropDb3Instance2 = cryptedforage.createInstance(
                 dropDb3Instance2Options
             );
-            dropDb3Instance3 = localforage.createInstance(
+            dropDb3Instance3 = cryptedforage.createInstance(
                 dropDb3Instance3Options
             );
             return Promise.resolve()
@@ -1859,7 +1879,7 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
 
         function expectStoreToNotExistAsync(options) {
             return new Promise(function(resolve, reject) {
-                if (driverName === localforage.INDEXEDDB) {
+                if (driverName === cryptedforage.INDEXEDDB) {
                     var req = indexedDB.open(options.name);
                     req.onsuccess = function() {
                         var db = req.result;
@@ -1874,7 +1894,7 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
                         resolve();
                     };
                     req.onerror = req.onblocked = reject;
-                } else if (driverName === localforage.WEBSQL) {
+                } else if (driverName === cryptedforage.WEBSQL) {
                     var db = openDatabase(options.name, '', '', 0);
                     db.transaction(function(t) {
                         t.executeSql(
@@ -1887,7 +1907,7 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
                             reject
                         );
                     }, reject);
-                } else if (driverName === localforage.LOCALSTORAGE) {
+                } else if (driverName === cryptedforage.LOCALSTORAGE) {
                     var keyPrefix = (function _getKeyPrefix(
                         options,
                         defaultConfig
@@ -1899,7 +1919,7 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
                         }
                         return keyPrefix;
                     })(options, {
-                        name: 'localforage',
+                        name: 'cryptedforage',
                         storeName: 'keyvaluepairs'
                     });
 
@@ -1992,7 +2012,7 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
 
         function expectDBToNotExistAsync(options) {
             return new Promise(function(resolve, reject) {
-                if (driverName === localforage.INDEXEDDB) {
+                if (driverName === cryptedforage.INDEXEDDB) {
                     var req = indexedDB.open(options.name);
                     req.onsuccess = function() {
                         var db = req.result;
@@ -2005,7 +2025,7 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
                         resolve();
                     };
                     req.onerror = req.onblocked = reject;
-                } else if (driverName === localforage.WEBSQL) {
+                } else if (driverName === cryptedforage.WEBSQL) {
                     var db = openDatabase(options.name, '', '', 0);
                     db.transaction(function(t) {
                         t.executeSql(
@@ -2028,7 +2048,7 @@ SUPPORTED_DRIVERS.forEach(function(driverName) {
                             reject
                         );
                     }, reject);
-                } else if (driverName === localforage.LOCALSTORAGE) {
+                } else if (driverName === cryptedforage.LOCALSTORAGE) {
                     var keyPrefix = (function _getKeyPrefix(options) {
                         return options.name + '/';
                     })(options);

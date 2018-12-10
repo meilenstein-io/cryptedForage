@@ -7,10 +7,10 @@
   <body>
     <div id="my-text"></div>
 
-    <script src="/dist/localforage.js"></script>
-    <script>localforage.setItem('my cool key',
+    <script src="/dist/cryptedforage.js"></script>
+    <script>cryptedforage.setItem('my cool key',
                                 'I have been set').then(function() {
-        localforage.getItem('my cool key').then(function(value) {
+        cryptedforage.getItem('my cool key').then(function(value) {
             document.getElementById('my-text').innerHTML = value;
         });
     });</script>

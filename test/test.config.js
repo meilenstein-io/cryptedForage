@@ -3,45 +3,47 @@ describe('Config API', function() {
     'use strict';
 
     var DRIVERS = [
-        localforage.INDEXEDDB,
-        localforage.LOCALSTORAGE,
-        localforage.WEBSQL
+        cryptedforage.INDEXEDDB,
+        cryptedforage.LOCALSTORAGE,
+        cryptedforage.WEBSQL
     ];
     var supportedDrivers = [];
 
     before(function() {
-        this.defaultConfig = localforage.config();
+        this.defaultConfig = cryptedforage.config();
 
         supportedDrivers = [];
         for (var i = 0; i <= DRIVERS.length; i++) {
-            if (localforage.supports(DRIVERS[i])) {
+            if (cryptedforage.supports(DRIVERS[i])) {
                 supportedDrivers.push(DRIVERS[i]);
             }
         }
     });
 
-    // Reset localForage before each test so we can call `config()` without
+    // Reset cryptedForage before each test so we can call `config()` without
     // errors.
     beforeEach(function() {
-        localforage._ready = null;
-        localforage.config(this.defaultConfig);
+        cryptedforage._ready = null;
+        cryptedforage.config(this.defaultConfig);
     });
 
     it('returns the default values', function(done) {
-        expect(localforage.config('description')).to.be('');
-        expect(localforage.config('name')).to.be('localforage');
-        expect(localforage.config('size')).to.be(4980736);
-        expect(localforage.config('storeName')).to.be('keyvaluepairs');
-        expect(localforage.config('version')).to.be(1.0);
-        localforage.ready(function() {
-            expect(localforage.config('driver')).to.be(localforage.driver());
+        expect(cryptedforage.config('description')).to.be('');
+        expect(cryptedforage.config('name')).to.be('cryptedforage');
+        expect(cryptedforage.config('size')).to.be(4980736);
+        expect(cryptedforage.config('storeName')).to.be('keyvaluepairs');
+        expect(cryptedforage.config('version')).to.be(1.0);
+        cryptedforage.ready(function() {
+            expect(cryptedforage.config('driver')).to.be(
+                cryptedforage.driver()
+            );
             done();
         });
     });
 
     it('returns error if API call was already made', function(done) {
-        localforage.length(function() {
-            var configResult = localforage.config({
+        cryptedforage.length(function() {
+            var configResult = cryptedforage.config({
                 description: '123',
                 driver: 'I a not set driver',
                 name: 'My Cool App',
@@ -50,24 +52,26 @@ describe('Config API', function() {
             });
 
             var error =
-                "Error: Can't call config() after localforage " +
+                "Error: Can't call config() after cryptedforage " +
                 'has been used.';
 
             expect(configResult).to.not.be(true);
             expect(configResult.toString()).to.be(error);
 
             // Expect the config values to be as they were before.
-            expect(localforage.config('description')).to.not.be('123');
-            expect(localforage.config('description')).to.be('');
-            expect(localforage.config('driver')).to.be(localforage.driver());
-            expect(localforage.config('driver')).to.not.be(
+            expect(cryptedforage.config('description')).to.not.be('123');
+            expect(cryptedforage.config('description')).to.be('');
+            expect(cryptedforage.config('driver')).to.be(
+                cryptedforage.driver()
+            );
+            expect(cryptedforage.config('driver')).to.not.be(
                 'I a not set driver'
             );
-            expect(localforage.config('name')).to.be('localforage');
-            expect(localforage.config('name')).to.not.be('My Cool App');
-            expect(localforage.config('size')).to.be(4980736);
-            expect(localforage.config('storeName')).to.be('keyvaluepairs');
-            expect(localforage.config('version')).to.be(1.0);
+            expect(cryptedforage.config('name')).to.be('cryptedforage');
+            expect(cryptedforage.config('name')).to.not.be('My Cool App');
+            expect(cryptedforage.config('size')).to.be(4980736);
+            expect(cryptedforage.config('storeName')).to.be('keyvaluepairs');
+            expect(cryptedforage.config('version')).to.be(1.0);
 
             done();
         });
@@ -77,7 +81,7 @@ describe('Config API', function() {
         var secondSupportedDriver =
             supportedDrivers.length >= 2 ? supportedDrivers[1] : null;
 
-        localforage.config({
+        cryptedforage.config({
             description: 'The offline datastore for my cool app',
             driver: secondSupportedDriver,
             name: 'My Cool App',
@@ -85,23 +89,25 @@ describe('Config API', function() {
             version: 2.0
         });
 
-        expect(localforage.config('description')).to.not.be('');
-        expect(localforage.config('description')).to.be(
+        expect(cryptedforage.config('description')).to.not.be('');
+        expect(cryptedforage.config('description')).to.be(
             'The offline datastore for my cool app'
         );
-        expect(localforage.config('driver')).to.be(secondSupportedDriver);
-        expect(localforage.config('name')).to.be('My Cool App');
-        expect(localforage.config('size')).to.be(4980736);
-        expect(localforage.config('storeName')).to.be('myStoreName');
-        expect(localforage.config('version')).to.be(2.0);
+        expect(cryptedforage.config('driver')).to.be(secondSupportedDriver);
+        expect(cryptedforage.config('name')).to.be('My Cool App');
+        expect(cryptedforage.config('size')).to.be(4980736);
+        expect(cryptedforage.config('storeName')).to.be('myStoreName');
+        expect(cryptedforage.config('version')).to.be(2.0);
 
-        localforage.ready(function() {
+        cryptedforage.ready(function() {
             if (supportedDrivers.length >= 2) {
-                expect(localforage.config('driver')).to.be(
+                expect(cryptedforage.config('driver')).to.be(
                     secondSupportedDriver
                 );
             } else {
-                expect(localforage.config('driver')).to.be(supportedDrivers[0]);
+                expect(cryptedforage.config('driver')).to.be(
+                    supportedDrivers[0]
+                );
             }
             done();
         });
@@ -111,14 +117,14 @@ describe('Config API', function() {
         it('sets new driver using preference order', function(done) {
             var otherSupportedDrivers = supportedDrivers.slice(1);
 
-            var configResult = localforage.config({
+            var configResult = cryptedforage.config({
                 driver: otherSupportedDrivers
             });
 
             expect(configResult).to.be.a(Promise);
-            localforage
+            cryptedforage
                 .ready(function() {
-                    expect(localforage.config('driver')).to.be(
+                    expect(cryptedforage.config('driver')).to.be(
                         otherSupportedDrivers[0]
                     );
                     return configResult;
@@ -130,15 +136,15 @@ describe('Config API', function() {
     }
 
     it('it does not set an unsupported driver', function(done) {
-        var oldDriver = localforage.driver();
-        var configResult = localforage.config({
+        var oldDriver = cryptedforage.driver();
+        var configResult = cryptedforage.config({
             driver: 'I am a not supported driver'
         });
 
         expect(configResult).to.be.a(Promise);
-        localforage
+        cryptedforage
             .ready(function() {
-                expect(localforage.config('driver')).to.be(oldDriver);
+                expect(cryptedforage.config('driver')).to.be(oldDriver);
                 return configResult;
             })
             .catch(function(error) {
@@ -151,44 +157,44 @@ describe('Config API', function() {
     });
 
     it('it does not set an unsupported driver using preference order', function(done) {
-        var oldDriver = localforage.driver();
-        localforage.config({
+        var oldDriver = cryptedforage.driver();
+        cryptedforage.config({
             driver: [
                 'I am a not supported driver',
                 'I am a an other not supported driver'
             ]
         });
 
-        localforage.ready(function() {
-            expect(localforage.config('driver')).to.be(oldDriver);
+        cryptedforage.ready(function() {
+            expect(cryptedforage.config('driver')).to.be(oldDriver);
             done();
         });
     });
 
     it('converts bad config values across drivers', function() {
-        localforage.config({
+        cryptedforage.config({
             name: 'My Cool App',
-            // https://github.com/mozilla/localForage/issues/247
+            // https://github.com/mozilla/cryptedForage/issues/247
             storeName: 'my store&name-v1',
             version: 2.0
         });
 
-        expect(localforage.config('name')).to.be('My Cool App');
-        expect(localforage.config('storeName')).to.be('my_store_name_v1');
-        expect(localforage.config('version')).to.be(2.0);
+        expect(cryptedforage.config('name')).to.be('My Cool App');
+        expect(cryptedforage.config('storeName')).to.be('my_store_name_v1');
+        expect(cryptedforage.config('version')).to.be(2.0);
     });
 
-    it('uses the config values in ' + localforage.driver(), function(done) {
-        localforage.config({
+    it('uses the config values in ' + cryptedforage.driver(), function(done) {
+        cryptedforage.config({
             description: 'The offline datastore for my cool app',
-            driver: localforage.driver(),
+            driver: cryptedforage.driver(),
             name: 'My Cool App',
             storeName: 'myStoreName',
             version: 2.0
         });
 
-        localforage.setItem('some key', 'some value').then(function(value) {
-            if (localforage.driver() === localforage.INDEXEDDB) {
+        cryptedforage.setItem('some key', 'some value').then(function(value) {
+            if (cryptedforage.driver() === cryptedforage.INDEXEDDB) {
                 var indexedDB =
                     indexedDB ||
                     window.indexedDB ||
@@ -206,7 +212,7 @@ describe('Config API', function() {
                     expect(dbValue).to.be(value);
                     done();
                 };
-            } else if (localforage.driver() === localforage.WEBSQL) {
+            } else if (cryptedforage.driver() === cryptedforage.WEBSQL) {
                 window
                     .openDatabase('My Cool App', String(2.0), '', 4980736)
                     .transaction(function(t) {
@@ -224,7 +230,7 @@ describe('Config API', function() {
                             }
                         );
                     });
-            } else if (localforage.driver() === localforage.LOCALSTORAGE) {
+            } else if (cryptedforage.driver() === cryptedforage.LOCALSTORAGE) {
                 var dbValue = JSON.parse(
                     localStorage['My Cool App/myStoreName/some key']
                 );
@@ -236,30 +242,30 @@ describe('Config API', function() {
     });
 
     it("returns all values when config isn't passed arguments", function() {
-        expect(localforage.config()).to.be.an('object');
-        expect(Object.keys(localforage.config()).length).to.be(6);
+        expect(cryptedforage.config()).to.be.an('object');
+        expect(Object.keys(cryptedforage.config()).length).to.be(6);
     });
 
-    // This may go away when https://github.com/mozilla/localForage/issues/168
+    // This may go away when https://github.com/mozilla/cryptedForage/issues/168
     // is fixed.
     it('maintains config values across setDriver calls', function(done) {
-        localforage.config({
+        cryptedforage.config({
             name: 'Mega Mozilla Dino'
         });
 
-        localforage
+        cryptedforage
             .length()
             .then(function() {
-                return localforage.setDriver(localforage.LOCALSTORAGE);
+                return cryptedforage.setDriver(cryptedforage.LOCALSTORAGE);
             })
             .then(function() {
-                expect(localforage.config('name')).to.be('Mega Mozilla Dino');
+                expect(cryptedforage.config('name')).to.be('Mega Mozilla Dino');
                 done();
             });
     });
 
     it('returns error if database version is not a number', function(done) {
-        var configResult = localforage.config({
+        var configResult = cryptedforage.config({
             version: '2.0'
         });
 

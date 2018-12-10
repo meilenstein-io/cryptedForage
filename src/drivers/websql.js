@@ -4,6 +4,7 @@ import Promise from '../utils/promise';
 import executeCallback from '../utils/executeCallback';
 import normalizeKey from '../utils/normalizeKey';
 import getCallback from '../utils/getCallback';
+import crypto from '../utils/crypto';
 
 /*
  * Includes code from:
@@ -140,7 +141,10 @@ function getItem(key, callback) {
                             var result = results.rows.length
                                 ? results.rows.item(0).value
                                 : null;
-
+                            result = crypto.decrypt(
+                                result,
+                                self._dbInfo.secret
+                            );
                             // Check to see if this is serialized content we need to
                             // unpack.
                             if (result) {
@@ -229,7 +233,7 @@ function _setItem(key, value, callback, retriesLeft) {
             .then(function() {
                 // The localStorage API doesn't return undefined values in an
                 // "expected" way, so undefined is always cast to null in all
-                // drivers. See: https://github.com/mozilla/localForage/pull/42
+                // drivers. See: https://github.com/mozilla/cryptedForage/pull/42
                 if (value === undefined) {
                     value = null;
                 }
@@ -296,6 +300,8 @@ function _setItem(key, value, callback, retriesLeft) {
 }
 
 function setItem(key, value, callback) {
+    var self = this;
+    value = crypto.encrypt(value, self._dbInfo.secret);
     return _setItem.apply(this, [key, value, callback, 1]);
 }
 
@@ -364,7 +370,7 @@ function clear(callback) {
 }
 
 // Does a simple `COUNT(key)` to get the number of items stored in
-// localForage.
+// cryptedForage.
 function length(callback) {
     var self = this;
 

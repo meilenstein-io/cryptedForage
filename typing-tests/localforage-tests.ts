@@ -1,45 +1,45 @@
-﻿import * as localforage from 'localforage';
+﻿import * as cryptedforage from 'cryptedforage';
 
-let localForage: LocalForage = localforage;
+let cryptedForage: CryptedForage = cryptedforage;
 
-namespace LocalForageTest {
-    localForage.clear((err: any) => {
+namespace CryptedForageTest {
+    cryptedForage.clear((err: any) => {
         let newError: any = err;
     });
 
-    localForage.getSerializer().then((s: LocalForageSerializer) => {
-        let serializer: LocalForageSerializer = s;
+    cryptedForage.getSerializer().then((s: CryptedForageSerializer) => {
+        let serializer: CryptedForageSerializer = s;
         typeof serializer.bufferToString === "function";
         typeof serializer.deserialize === "function";
         typeof serializer.serialize === "function";
         typeof serializer.stringToBuffer === "function";
     });
 
-    localForage.iterate((value, key: string, num: number) => {
+    cryptedForage.iterate((value, key: string, num: number) => {
         let newStr: any = value;
         let newKey: string = key;
         let newNum: number = num;
     });
 
-    localForage.iterate((value: any, key: string, num: number) => {
+    cryptedForage.iterate((value: any, key: string, num: number) => {
         let newStr: any = value;
         let newKey: string = key;
         let newNum: number = num;
     });
 
-    localForage.iterate<any, void>((value: any, key: string, num: number) => {
+    cryptedForage.iterate<any, void>((value: any, key: string, num: number) => {
         let newStr: any = value;
         let newKey: string = key;
         let newNum: number = num;
     });
 
-    localForage.iterate((str: string, key: string, num: number) => {
+    cryptedForage.iterate((str: string, key: string, num: number) => {
         let newStr: string = str;
         let newKey: string = key;
         let newNum: number = num;
     });
 
-    localForage.iterate((str: string, key: string, num: number) => {
+    cryptedForage.iterate((str: string, key: string, num: number) => {
         let newStr: string = str;
         let newKey: string = key;
         let newNum: number = num;
@@ -52,7 +52,7 @@ namespace LocalForageTest {
         }
     });
 
-    localForage.iterate<string, number | void>((str, key: string, num: number) => {
+    cryptedForage.iterate<string, number | void>((str, key: string, num: number) => {
         let newStr: string = str;
         let newKey: string = key;
         let newNum: number = num;
@@ -65,7 +65,7 @@ namespace LocalForageTest {
         }
     });
 
-    localForage.iterate<string, number | void>((str: string, key: string, num: number) => {
+    cryptedForage.iterate<string, number | void>((str: string, key: string, num: number) => {
         let newStr: string = str;
         let newKey: string = key;
         let newNum: number = num;
@@ -78,57 +78,57 @@ namespace LocalForageTest {
         }
     });
 
-    localForage.length((err: any, num: number) => {
+    cryptedForage.length((err: any, num: number) => {
         let newError: any = err;
         let newNumber: number = num;
     });
 
-    localForage.length().then((num: number) => {
+    cryptedForage.length().then((num: number) => {
         var newNumber: number = num;
     });
 
-    localForage.key(0, (err: any, value: string) => {
+    cryptedForage.key(0, (err: any, value: string) => {
         let newError: any = err;
         let newValue: string = value;
     });
 
-    localForage.keys((err: any, keys: Array<string>) => {
+    cryptedForage.keys((err: any, keys: Array<string>) => {
         let newError: any = err;
         let newArray: Array<string> = keys;
     });
 
-    localForage.keys().then((keys: Array<string>) => {
+    cryptedForage.keys().then((keys: Array<string>) => {
         var newArray: Array<string> = keys;
     });
 
-    localForage.getItem("key",(err: any, str: string) => {
+    cryptedForage.getItem("key",(err: any, str: string) => {
         let newError: any = err;
         let newStr: string = str
     });
 
-    localForage.getItem<string>("key").then((str: string) => {
+    cryptedForage.getItem<string>("key").then((str: string) => {
         let newStr: string = str;
     });
 
-    localForage.setItem("key", "value",(err: any, str: string) => {
+    cryptedForage.setItem("key", "value",(err: any, str: string) => {
         let newError: any = err;
         let newStr: string = str
     });
 
-    localForage.setItem("key", "value").then((str: string) => {
+    cryptedForage.setItem("key", "value").then((str: string) => {
         let newStr: string = str;
     });
 
-    localForage.removeItem("key",(err: any) => {
+    cryptedForage.removeItem("key",(err: any) => {
         let newError: any = err;
     });
 
-    localForage.removeItem("key").then(() => {
+    cryptedForage.removeItem("key").then(() => {
     });
 
-    const customDriver: LocalForageDriver = {
+    const customDriver: CryptedForageDriver = {
         _driver: "CustomDriver",
-        _initStorage: (options: LocalForageOptions) => {},
+        _initStorage: (options: CryptedForageOptions) => {},
         getItem: <T>(key: string, callback?: (err: any, value: T) => void) => Promise.resolve({} as T),
         setItem: <T>(key: string, value: T, callback?: (err: any, value: T) => void) => Promise.resolve(value),
         removeItem: (key: string, callback?: (err: any) => void) => Promise.resolve(),
@@ -138,11 +138,11 @@ namespace LocalForageTest {
         keys: (callback?: (err: any, keys: string[]) => void) => Promise.resolve(['1', '2']),
         iterate: <T, U>(iteratee: (value: T, key: string, iterationNumber: number) => U, callback?: (err: any, result: U) => void) => Promise.resolve({} as U),
     };
-    localForage.defineDriver(customDriver);
+    cryptedForage.defineDriver(customDriver);
 
-    const customDriver2: LocalForageDriver = {
+    const customDriver2: CryptedForageDriver = {
         _driver: "CustomDriver",
-        _initStorage: (options: LocalForageOptions) => {},
+        _initStorage: (options: CryptedForageOptions) => {},
         _support: true,
         getItem: <T>(key: string, callback?: (err: any, value: T) => void) => Promise.resolve({} as T),
         setItem: <T>(key: string, value: T, callback?: (err: any, value: T) => void) => Promise.resolve(value),
@@ -153,11 +153,11 @@ namespace LocalForageTest {
         keys: (callback?: (err: any, keys: string[]) => void) => Promise.resolve(['1', '2']),
         iterate: <T, U>(iteratee: (value: T, key: string, iterationNumber: number) => U, callback?: (err: any, result: U) => void) => Promise.resolve({} as U),
     };
-    localForage.defineDriver(customDriver2);
+    cryptedForage.defineDriver(customDriver2);
 
-    const customDriver3: LocalForageDriver = {
+    const customDriver3: CryptedForageDriver = {
         _driver: "CustomDriver",
-        _initStorage: (options: LocalForageOptions) => {},
+        _initStorage: (options: CryptedForageOptions) => {},
         _support: () => Promise.resolve(true),
         getItem: <T>(key: string, callback?: (err: any, value: T) => void) => Promise.resolve({} as T),
         setItem: <T>(key: string, value: T, callback?: (err: any, value: T) => void) => Promise.resolve(value),
@@ -167,12 +167,12 @@ namespace LocalForageTest {
         key: (keyIndex: number, callback?: (err: any, key: string) => void) => Promise.resolve('aKey'),
         keys: (callback?: (err: any, keys: string[]) => void) => Promise.resolve(['1', '2']),
         iterate: <T, U>(iteratee: (value: T, key: string, iterationNumber: number) => U, callback?: (err: any, result: U) => void) => Promise.resolve({} as U),
-        dropInstance: (dbInstanceOptions?: LocalForageDbInstanceOptions, callback?: (err: any) => void) => Promise.resolve(),
+        dropInstance: (dbInstanceOptions?: CryptedForageDbInstanceOptions, callback?: (err: any) => void) => Promise.resolve(),
     };
-    localForage.defineDriver(customDriver3);
+    cryptedForage.defineDriver(customDriver3);
 
-    localForage.getDriver("CustomDriver").then((result: LocalForageDriver) => {
-        var driver: LocalForageDriver = result;
+    cryptedForage.getDriver("CustomDriver").then((result: CryptedForageDriver) => {
+        var driver: CryptedForageDriver = result;
         // we need to use a variable for proper type guards before TS 2.0
         var _support = driver._support;
         if (typeof _support === "function") {
@@ -188,74 +188,74 @@ namespace LocalForageTest {
     {
         let config: boolean;
 
-        const configOptions: LocalForageOptions = {
+        const configOptions: CryptedForageOptions = {
             name: "testyo",
-            driver: localForage.LOCALSTORAGE
+            driver: cryptedForage.LOCALSTORAGE
         };
 
-        config = localForage.config(configOptions);
-        config = localForage.config({
+        config = cryptedForage.config(configOptions);
+        config = cryptedForage.config({
             name: "testyo",
-            driver: localForage.LOCALSTORAGE
+            driver: cryptedForage.LOCALSTORAGE
         });
     }
 
     {
-        let store: LocalForage;
+        let store: CryptedForage;
 
-        const configOptions: LocalForageOptions = {
+        const configOptions: CryptedForageOptions = {
             name: "da instance",
-            driver: localForage.LOCALSTORAGE
+            driver: cryptedForage.LOCALSTORAGE
         };
 
-        store = localForage.createInstance(configOptions);
-        store = localForage.createInstance({
+        store = cryptedForage.createInstance(configOptions);
+        store = cryptedForage.createInstance({
             name: "da instance",
-            driver: localForage.LOCALSTORAGE
+            driver: cryptedForage.LOCALSTORAGE
         });
     }
 
     {
-        localForage.dropInstance().then(() => {});
+        cryptedForage.dropInstance().then(() => {});
 
-        const dropInstanceOptions: LocalForageDbInstanceOptions = {
+        const dropInstanceOptions: CryptedForageDbInstanceOptions = {
             name: "da instance",
             storeName: "da store"
         };
 
-        localForage.dropInstance(dropInstanceOptions).then(() => {});
+        cryptedForage.dropInstance(dropInstanceOptions).then(() => {});
 
-        localForage.dropInstance({
+        cryptedForage.dropInstance({
             name: "da instance",
             storeName: "da store"
         }).then(() => {});
 
-        const dropDbOptions: LocalForageDbInstanceOptions = {
+        const dropDbOptions: CryptedForageDbInstanceOptions = {
             name: "da instance",
         };
 
-        localForage.dropInstance({
+        cryptedForage.dropInstance({
             name: "da instance",
         }).then(() => {});
     }
 
     {
-        let testSerializer: LocalForageSerializer;
+        let testSerializer: CryptedForageSerializer;
 
-        localForage.getSerializer()
-        .then((serializer: LocalForageSerializer) => {
+        cryptedForage.getSerializer()
+        .then((serializer: CryptedForageSerializer) => {
             testSerializer = serializer;
         });
 
-        localForage.getSerializer((serializer: LocalForageSerializer) => {
+        cryptedForage.getSerializer((serializer: CryptedForageSerializer) => {
             testSerializer = serializer;
         });
     }
 
     {
-        localForage.ready().then(() => {});
+        cryptedForage.ready().then(() => {});
 
-        localForage.ready((error) => {
+        cryptedForage.ready((error) => {
             if (error) {
 
             } else {

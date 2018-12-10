@@ -1,18 +1,18 @@
 /* global before:true, beforeEach:true, describe:true, expect:true, it:true, Modernizr:true */
 var DRIVERS = [
-    localforage.INDEXEDDB,
-    localforage.LOCALSTORAGE,
-    localforage.WEBSQL
+    cryptedforage.INDEXEDDB,
+    cryptedforage.LOCALSTORAGE,
+    cryptedforage.WEBSQL
 ];
 
 DRIVERS.forEach(function(driverName) {
     if (
-        (!localforage.supports(localforage.INDEXEDDB) &&
-            driverName === localforage.INDEXEDDB) ||
-        (!localforage.supports(localforage.LOCALSTORAGE) &&
-            driverName === localforage.LOCALSTORAGE) ||
-        (!localforage.supports(localforage.WEBSQL) &&
-            driverName === localforage.WEBSQL)
+        (!cryptedforage.supports(cryptedforage.INDEXEDDB) &&
+            driverName === cryptedforage.INDEXEDDB) ||
+        (!cryptedforage.supports(cryptedforage.LOCALSTORAGE) &&
+            driverName === cryptedforage.LOCALSTORAGE) ||
+        (!cryptedforage.supports(cryptedforage.WEBSQL) &&
+            driverName === cryptedforage.WEBSQL)
     ) {
         // Browser doesn't support this storage library, so we exit the API
         // tests.
@@ -23,11 +23,11 @@ DRIVERS.forEach(function(driverName) {
         'use strict';
 
         before(function(done) {
-            localforage.setDriver(driverName).then(done);
+            cryptedforage.setDriver(driverName).then(done);
         });
 
         beforeEach(function(done) {
-            localforage.clear(done);
+            cryptedforage.clear(done);
         });
 
         if (!Modernizr.webworkers) {
@@ -36,8 +36,8 @@ DRIVERS.forEach(function(driverName) {
         }
 
         if (
-            driverName === localforage.LOCALSTORAGE ||
-            driverName === localforage.WEBSQL
+            driverName === cryptedforage.LOCALSTORAGE ||
+            driverName === cryptedforage.WEBSQL
         ) {
             it.skip(driverName + ' is not supported in web workers');
             return;

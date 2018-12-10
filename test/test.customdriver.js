@@ -3,10 +3,10 @@ describe('When Custom Drivers are used', function() {
     'use strict';
     var errorMessage =
         'Custom driver not compliant; see ' +
-        'https://mozilla.github.io/localForage/#definedriver';
+        'https://mozilla.github.io/cryptedForage/#definedriver';
 
     it('fails to define a no-name custom driver', function(done) {
-        localforage.defineDriver(
+        cryptedforage.defineDriver(
             {
                 _initStorage: function() {},
                 iterate: function() {},
@@ -28,7 +28,7 @@ describe('When Custom Drivers are used', function() {
     });
 
     it('fails to define a no-name custom driver [promise]', function(done) {
-        localforage
+        cryptedforage
             .defineDriver({
                 _initStorage: function() {},
                 iterate: function() {},
@@ -48,7 +48,7 @@ describe('When Custom Drivers are used', function() {
     });
 
     it('fails to define a custom driver with missing methods', function(done) {
-        localforage.defineDriver(
+        cryptedforage.defineDriver(
             {
                 _driver: 'missingMethodsDriver',
                 _initStorage: function() {},
@@ -68,7 +68,7 @@ describe('When Custom Drivers are used', function() {
     });
 
     it('fails to define a custom driver with missing methods [promise]', function(done) {
-        localforage
+        cryptedforage
             .defineDriver({
                 _driver: 'missingMethodsDriver',
                 _initStorage: function() {},
@@ -86,34 +86,38 @@ describe('When Custom Drivers are used', function() {
     });
 
     it('defines a compliant custom driver', function(done) {
-        localforage.defineDriver(dummyStorageDriver, function() {
+        cryptedforage.defineDriver(dummyStorageDriver, function() {
             done();
         });
     });
 
     it('defines a compliant custom driver [promise]', function(done) {
-        localforage.defineDriver(dummyStorageDriver).then(function() {
+        cryptedforage.defineDriver(dummyStorageDriver).then(function() {
             done();
         });
     });
 
     it('sets a custom driver', function(done) {
-        localforage.defineDriver(dummyStorageDriver, function() {
-            localforage.setDriver(dummyStorageDriver._driver, function() {
-                expect(localforage.driver()).to.be(dummyStorageDriver._driver);
+        cryptedforage.defineDriver(dummyStorageDriver, function() {
+            cryptedforage.setDriver(dummyStorageDriver._driver, function() {
+                expect(cryptedforage.driver()).to.be(
+                    dummyStorageDriver._driver
+                );
                 done();
             });
         });
     });
 
     it('sets a custom driver [promise]', function(done) {
-        localforage
+        cryptedforage
             .defineDriver(dummyStorageDriver)
             .then(function() {
-                return localforage.setDriver(dummyStorageDriver._driver);
+                return cryptedforage.setDriver(dummyStorageDriver._driver);
             })
             .then(function() {
-                expect(localforage.driver()).to.be(dummyStorageDriver._driver);
+                expect(cryptedforage.driver()).to.be(
+                    dummyStorageDriver._driver
+                );
                 done();
             });
     });
@@ -133,9 +137,9 @@ describe('When Custom Drivers are used', function() {
             keys: function() {}
         };
 
-        localforage.defineDriver(customDriver);
-        localforage.setDriver(customDriver._driver).then(function() {
-            expect(localforage.driver()).to.be(customDriver._driver);
+        cryptedforage.defineDriver(customDriver);
+        cryptedforage.setDriver(customDriver._driver).then(function() {
+            expect(cryptedforage.driver()).to.be(customDriver._driver);
             done();
         });
     });
@@ -155,9 +159,9 @@ describe('When Custom Drivers are used', function() {
             keys: function() {}
         };
 
-        localforage.defineDriver(customDriver);
-        localforage.setDriver(customDriver._driver).then(function() {
-            expect(localforage.driver()).to.be(customDriver._driver);
+        cryptedforage.defineDriver(customDriver);
+        cryptedforage.setDriver(customDriver._driver).then(function() {
+            expect(cryptedforage.driver()).to.be(customDriver._driver);
             done();
         });
     });
@@ -179,27 +183,27 @@ describe('When Custom Drivers are used', function() {
             keys: function() {}
         };
 
-        localforage
+        cryptedforage
             .defineDriver(customDriver)
             .then(function() {
-                return localforage.setDriver(customDriver._driver);
+                return cryptedforage.setDriver(customDriver._driver);
             })
             .then(function() {
-                expect(localforage.driver()).to.be(customDriver._driver);
+                expect(cryptedforage.driver()).to.be(customDriver._driver);
                 done();
             });
     });
 
     it('sets and uses a custom driver', function(done) {
-        localforage.defineDriver(dummyStorageDriver, function() {
-            localforage.setDriver(dummyStorageDriver._driver, function(err) {
+        cryptedforage.defineDriver(dummyStorageDriver, function() {
+            cryptedforage.setDriver(dummyStorageDriver._driver, function(err) {
                 expect(err).to.be(undefined);
-                localforage.setItem(
+                cryptedforage.setItem(
                     'testCallbackKey',
                     'testCallbackValue',
                     function(err) {
                         expect(err).to.be(null);
-                        localforage.getItem('testCallbackKey', function(
+                        cryptedforage.getItem('testCallbackKey', function(
                             err,
                             value
                         ) {
@@ -214,19 +218,19 @@ describe('When Custom Drivers are used', function() {
     });
 
     it('sets and uses a custom driver [promise]', function(done) {
-        localforage
+        cryptedforage
             .defineDriver(dummyStorageDriver)
             .then(function() {
-                return localforage.setDriver(dummyStorageDriver._driver);
+                return cryptedforage.setDriver(dummyStorageDriver._driver);
             })
             .then(function() {
-                return localforage.setItem(
+                return cryptedforage.setItem(
                     'testPromiseKey',
                     'testPromiseValue'
                 );
             })
             .then(function() {
-                return localforage.getItem('testPromiseKey');
+                return cryptedforage.getItem('testPromiseKey');
             })
             .then(function(value) {
                 expect(value).to.be('testPromiseValue');
@@ -252,13 +256,13 @@ describe('When Custom Drivers are used', function() {
                 keys: function() {}
             };
 
-            localforage
+            cryptedforage
                 .defineDriver(customDriver)
                 .then(function() {
-                    return localforage.setDriver(customDriver._driver);
+                    return cryptedforage.setDriver(customDriver._driver);
                 })
                 .then(function() {
-                    return localforage.dropInstance();
+                    return cryptedforage.dropInstance();
                 })
                 .catch(function(err) {
                     expect(err.message).to.be(
@@ -288,13 +292,13 @@ describe('When Custom Drivers are used', function() {
                 dropInstance: function() {}
             };
 
-            localforage
+            cryptedforage
                 .defineDriver(customDriver)
                 .then(function() {
-                    return localforage.setDriver(customDriver._driver);
+                    return cryptedforage.setDriver(customDriver._driver);
                 })
                 .then(function() {
-                    return localforage.dropInstance();
+                    return cryptedforage.dropInstance();
                 })
                 .then(function() {
                     done();

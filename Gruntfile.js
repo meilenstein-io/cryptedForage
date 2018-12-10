@@ -12,16 +12,16 @@ module.exports = exports = function(grunt) {
     'use strict';
 
     var BANNER = '/*!\n' +
-                 '    localForage -- Offline Storage, Improved\n' +
+                 '    cryptedForage -- Offline Storage, Improved\n' +
                  '    Version ' + grunt.file.readJSON('package.json').version + '\n' +
-                 '    https://localforage.github.io/localForage\n' +
+                 '    https://cryptedforage.github.io/cryptedForage\n' +
                  '    (c) 2013-2017 Mozilla, Apache License 2.0\n' +
                  '*/\n';
 
     var babelModuleIdProvider = function getModuleId(moduleName) {
         var files = {
-            'src/localforage': 'localforage',
-            'src/utils/serializer': 'localforageSerializer',
+            'src/cryptedforage': 'cryptedforage',
+            'src/utils/serializer': 'cryptedforageSerializer',
             'src/drivers/indexeddb': 'asyncStorage',
             'src/drivers/localstorage': 'localStorageWrapper',
             'src/drivers/websql': 'webSQLStorage'
@@ -40,7 +40,7 @@ module.exports = exports = function(grunt) {
             },
             dist: {
                 files: {
-                    'build/es5src/localforage.js': 'src/localforage.js',
+                    'build/es5src/cryptedforage.js': 'src/cryptedforage.js',
                     'build/es5src/utils/serializer.js': 'src/utils/serializer.js',
                     'build/es5src/drivers/indexeddb.js': 'src/drivers/indexeddb.js',
                     'build/es5src/drivers/localstorage.js': 'src/drivers/localstorage.js',
@@ -51,15 +51,15 @@ module.exports = exports = function(grunt) {
         browserify: {
             package_bundling_test: {
                 src: 'test/runner.browserify.js',
-                dest: 'test/localforage.browserify.js'
+                dest: 'test/cryptedforage.browserify.js'
             },
             main: {
                 files: {
-                    'dist/localforage.js': 'src/localforage.js'
+                    'dist/cryptedforage.js': 'src/cryptedforage.js'
                 },
                 options: {
                     browserifyOptions: {
-                        standalone: 'localforage'
+                        standalone: 'cryptedforage'
                     },
                     transform: ['rollupify', 'babelify'],
                     plugin: ['bundle-collapser/plugin', 'browserify-derequire']
@@ -67,11 +67,11 @@ module.exports = exports = function(grunt) {
             },
             no_promises: {
                 files: {
-                    'dist/localforage.nopromises.js': 'src/localforage.js'
+                    'dist/cryptedforage.nopromises.js': 'src/cryptedforage.js'
                 },
                 options: {
                     browserifyOptions: {
-                        standalone: 'localforage'
+                        standalone: 'cryptedforage'
                     },
                     transform: ['rollupify', 'babelify'],
                     plugin: ['bundle-collapser/plugin', 'browserify-derequire'],
@@ -83,15 +83,15 @@ module.exports = exports = function(grunt) {
             options: {
                 separator: ''
             },
-            localforage: {
+            cryptedforage: {
                 // just to add the BANNER
                 // without adding an extra grunt module
                 files: {
-                    'dist/localforage.js': [
-                        'dist/localforage.js'
+                    'dist/cryptedforage.js': [
+                        'dist/cryptedforage.js'
                     ],
-                    'dist/localforage.nopromises.js': [
-                        'dist/localforage.nopromises.js'
+                    'dist/cryptedforage.nopromises.js': [
+                        'dist/cryptedforage.nopromises.js'
                     ]
                 },
                 options: {
@@ -124,14 +124,14 @@ module.exports = exports = function(grunt) {
         es3_safe_recast: {
             dist: {
                 files: [{
-                    src: ['dist/localforage.js'],
-                    dest: 'dist/localforage.js'
+                    src: ['dist/cryptedforage.js'],
+                    dest: 'dist/cryptedforage.js'
                 }]
             },
             nopromises: {
                 files: [{
-                    src: ['dist/localforage.nopromises.js'],
-                    dest: 'dist/localforage.nopromises.js'
+                    src: ['dist/cryptedforage.nopromises.js'],
+                    dest: 'dist/cryptedforage.nopromises.js'
                 }]
             }
         },
@@ -166,7 +166,7 @@ module.exports = exports = function(grunt) {
                     build: process.env.TRAVIS_JOB_ID,
                     concurrency: 3,
                     browsers: saucelabsBrowsers,
-                    testname: 'localForage Tests'
+                    testname: 'cryptedForage Tests'
                 }
             }
         },
@@ -179,11 +179,11 @@ module.exports = exports = function(grunt) {
             }
         },
         uglify: {
-            localforage: {
+            cryptedforage: {
                 files: {
-                    'dist/localforage.min.js': ['dist/localforage.js'],
-                    'dist/localforage.nopromises.min.js': [
-                        'dist/localforage.nopromises.js'
+                    'dist/cryptedforage.min.js': ['dist/cryptedforage.js'],
+                    'dist/cryptedforage.nopromises.min.js': [
+                        'dist/cryptedforage.nopromises.js'
                     ]
                 },
                 options: {
@@ -198,7 +198,7 @@ module.exports = exports = function(grunt) {
             },
             'mocha:unit': {
                 files: [
-                    'dist/localforage.js',
+                    'dist/cryptedforage.js',
                     'test/runner.js',
                     'test/test.*.*'
                 ],
@@ -215,7 +215,7 @@ module.exports = exports = function(grunt) {
                 entry: './test/runner.webpack.js',
                 output: {
                     path: 'test/',
-                    filename: 'localforage.webpack.js'
+                    filename: 'cryptedforage.webpack.js'
                 }
             }
         }

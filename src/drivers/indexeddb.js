@@ -6,6 +6,7 @@ import executeCallback from '../utils/executeCallback';
 import executeTwoCallbacks from '../utils/executeTwoCallbacks';
 import normalizeKey from '../utils/normalizeKey';
 import getCallback from '../utils/getCallback';
+import crypto from '../utils/crypto';
 
 // Some code originally from async_storage.js in
 // [Gaia](https://github.com/mozilla-b2g/gaia).
@@ -394,7 +395,7 @@ function createTransaction(dbInfo, mode, callback, retries) {
 
 function createDbContext() {
     return {
-        // Running localForages sharing a database.
+        // Running cryptedForages sharing a database.
         forages: [],
         // Shared database.
         db: null,
@@ -429,7 +430,7 @@ function _initStorage(options) {
         dbContexts[dbInfo.name] = dbContext;
     }
 
-    // Register itself as a running localForage in the current context.
+    // Register itself as a running cryptedForage in the current context.
     dbContext.forages.push(self);
 
     // Replace the default `ready()` function with the specialized one.
@@ -438,12 +439,12 @@ function _initStorage(options) {
         self.ready = _fullyReady;
     }
 
-    // Create an array of initialization states of the related localForages.
+    // Create an array of initialization states of the related cryptedForages.
     var initPromises = [];
 
     function ignoreErrors() {
         // Don't handle errors here,
-        // just makes sure related localForages aren't pending.
+        // just makes sure related cryptedForages aren't pending.
         return Promise.resolve();
     }
 
@@ -455,11 +456,11 @@ function _initStorage(options) {
         }
     }
 
-    // Take a snapshot of the related localForages.
+    // Take a snapshot of the related cryptedForages.
     var forages = dbContext.forages.slice(0);
 
     // Initialize the connection process only when
-    // all the related localForages aren't pending.
+    // all the related cryptedForages aren't pending.
     return Promise.all(initPromises)
         .then(function() {
             dbInfo.db = dbContext.db;
@@ -477,7 +478,7 @@ function _initStorage(options) {
         .then(function(db) {
             dbInfo.db = dbContext.db = db;
             self._dbInfo = dbInfo;
-            // Share the final connection amongst related localForages.
+            // Share the final connection amongst related cryptedForages.
             for (var k = 0; k < forages.length; k++) {
                 var forage = forages[k];
                 if (forage !== self) {
@@ -514,13 +515,14 @@ function getItem(key, callback) {
 
                         req.onsuccess = function() {
                             var value = req.result;
+                            console.log(value);
                             if (value === undefined) {
                                 value = null;
                             }
                             if (_isEncodedBlob(value)) {
                                 value = _decodeBlob(value);
                             }
-                            resolve(value);
+                            resolve(crypto.decrypt(value, self._dbInfo.secret));
                         };
 
                         req.onerror = function() {
@@ -609,6 +611,8 @@ function setItem(key, value, callback) {
 
     key = normalizeKey(key);
 
+    value = crypto.encrypt(value, self._dbInfo.secret);
+
     var promise = new Promise(function(resolve, reject) {
         var dbInfo;
         self
@@ -644,7 +648,7 @@ function setItem(key, value, callback) {
                         // The reason we don't _save_ null is because IE 10 does
                         // not support saving the `null` type in IndexedDB. How
                         // ironic, given the bug below!
-                        // See: https://github.com/mozilla/localForage/issues/161
+                        // See: https://github.com/mozilla/cryptedForage/issues/161
                         if (value === null) {
                             value = undefined;
                         }

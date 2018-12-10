@@ -243,7 +243,7 @@
                 .ready()
                 .then(function() {
                     // Convert undefined values to null.
-                    // https://github.com/mozilla/localForage/pull/42
+                    // https://github.com/mozilla/cryptedForage/pull/42
                     if (value === undefined) {
                         value = null;
                     }

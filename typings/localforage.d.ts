@@ -1,10 +1,10 @@
-interface LocalForageDbInstanceOptions {
+interface CryptedForageDbInstanceOptions {
     name?: string;
 
     storeName?: string;
 }
 
-interface LocalForageOptions extends LocalForageDbInstanceOptions {
+interface CryptedForageOptions extends CryptedForageDbInstanceOptions {
     driver?: string | string[];
 
     size?: number;
@@ -14,7 +14,7 @@ interface LocalForageOptions extends LocalForageDbInstanceOptions {
     description?: string;
 }
 
-interface LocalForageDbMethodsCore {
+interface CryptedForageDbMethodsCore {
     getItem<T>(key: string, callback?: (err: any, value: T) => void): Promise<T>;
 
     setItem<T>(key: string, value: T, callback?: (err: any, value: T) => void): Promise<T>;
@@ -33,35 +33,35 @@ interface LocalForageDbMethodsCore {
             callback?: (err: any, result: U) => void): Promise<U>;
 }
 
-interface LocalForageDropInstanceFn {
-    (dbInstanceOptions?: LocalForageDbInstanceOptions, callback?: (err: any) => void): Promise<void>;
+interface CryptedForageDropInstanceFn {
+    (dbInstanceOptions?: CryptedForageDbInstanceOptions, callback?: (err: any) => void): Promise<void>;
 }
 
-interface LocalForageDriverMethodsOptional {
-    dropInstance?: LocalForageDropInstanceFn;
+interface CryptedForageDriverMethodsOptional {
+    dropInstance?: CryptedForageDropInstanceFn;
 }
 
-// duplicating LocalForageDriverMethodsOptional to preserve TS v2.0 support,
+// duplicating CryptedForageDriverMethodsOptional to preserve TS v2.0 support,
 // since Partial<> isn't supported there
-interface LocalForageDbMethodsOptional {
-    dropInstance: LocalForageDropInstanceFn;
+interface CryptedForageDbMethodsOptional {
+    dropInstance: CryptedForageDropInstanceFn;
 }
 
-interface LocalForageDriverDbMethods extends LocalForageDbMethodsCore, LocalForageDriverMethodsOptional {}
+interface CryptedForageDriverDbMethods extends CryptedForageDbMethodsCore, CryptedForageDriverMethodsOptional {}
 
-interface LocalForageDriverSupportFunc {
+interface CryptedForageDriverSupportFunc {
     (): Promise<boolean>;
 }
 
-interface LocalForageDriver extends LocalForageDriverDbMethods {
+interface CryptedForageDriver extends CryptedForageDriverDbMethods {
     _driver: string;
 
-    _initStorage(options: LocalForageOptions): void;
+    _initStorage(options: CryptedForageOptions): void;
 
-    _support?: boolean | LocalForageDriverSupportFunc;
+    _support?: boolean | CryptedForageDriverSupportFunc;
 }
 
-interface LocalForageSerializer {
+interface CryptedForageSerializer {
     serialize<T>(value: T | ArrayBuffer | Blob, callback: (value: string, error: any) => void): void;
 
     deserialize<T>(value: string): T | ArrayBuffer | Blob;
@@ -71,28 +71,28 @@ interface LocalForageSerializer {
     bufferToString(buffer: ArrayBuffer): string;
 }
 
-interface LocalForageDbMethods extends LocalForageDbMethodsCore, LocalForageDbMethodsOptional {}
+interface CryptedForageDbMethods extends CryptedForageDbMethodsCore, CryptedForageDbMethodsOptional {}
 
-interface LocalForage extends LocalForageDbMethods {
+interface CryptedForage extends CryptedForageDbMethods {
     LOCALSTORAGE: string;
     WEBSQL: string;
     INDEXEDDB: string;
 
     /**
-     * Set and persist localForage options. This must be called before any other calls to localForage are made, but can be called after localForage is loaded.
+     * Set and persist cryptedForage options. This must be called before any other calls to cryptedForage are made, but can be called after cryptedForage is loaded.
      * If you set any config values with this method they will persist after driver changes, so you can call config() then setDriver()
-     * @param {LocalForageOptions} options?
+     * @param {CryptedForageOptions} options?
      */
-    config(options: LocalForageOptions): boolean;
+    config(options: CryptedForageOptions): boolean;
     config(options: string): any;
-    config(): LocalForageOptions;
+    config(): CryptedForageOptions;
 
     /**
-     * Create a new instance of localForage to point to a different store.
+     * Create a new instance of cryptedForage to point to a different store.
      * All the configuration options used by config are supported.
-     * @param {LocalForageOptions} options
+     * @param {CryptedForageOptions} options
      */
-    createInstance(options: LocalForageOptions): LocalForage;
+    createInstance(options: CryptedForageOptions): CryptedForage;
 
     driver(): string;
 
@@ -102,22 +102,22 @@ interface LocalForage extends LocalForageDbMethods {
      */
     setDriver(driver: string | string[], callback?: () => void, errorCallback?: (error: any) => void): Promise<void>;
 
-    defineDriver(driver: LocalForageDriver, callback?: () => void, errorCallback?: (error: any) => void): Promise<void>;
+    defineDriver(driver: CryptedForageDriver, callback?: () => void, errorCallback?: (error: any) => void): Promise<void>;
 
     /**
      * Return a particular driver
      * @param {string} driver
      */
-    getDriver(driver: string): Promise<LocalForageDriver>;
+    getDriver(driver: string): Promise<CryptedForageDriver>;
 
-    getSerializer(callback?: (serializer: LocalForageSerializer) => void): Promise<LocalForageSerializer>;
+    getSerializer(callback?: (serializer: CryptedForageSerializer) => void): Promise<CryptedForageSerializer>;
 
     supports(driverName: string): boolean;
 
     ready(callback?: (error: any) => void): Promise<void>;
 }
 
-declare module "localforage" {
-    let localforage: LocalForage;
-    export = localforage;
+declare module "cryptedforage" {
+    let cryptedforage: CryptedForage;
+    export = cryptedforage;
 }

@@ -9,6 +9,7 @@ import Promise from '../utils/promise';
 import executeCallback from '../utils/executeCallback';
 import normalizeKey from '../utils/normalizeKey';
 import getCallback from '../utils/getCallback';
+import crypto from '../utils/crypto';
 
 function _getKeyPrefix(options, defaultConfig) {
     var keyPrefix = options.name + '/';
@@ -21,7 +22,7 @@ function _getKeyPrefix(options, defaultConfig) {
 
 // Check if localStorage throws when saving an item
 function checkIfLocalStorageThrows() {
-    var localStorageTestKey = '_localforage_support_test';
+    var localStorageTestKey = '_cryptedforage_support_test';
 
     try {
         localStorage.setItem(localStorageTestKey, true);
@@ -100,7 +101,9 @@ function getItem(key, callback) {
         // is likely undefined and we'll pass it straight to the
         // callback.
         if (result) {
-            result = dbInfo.serializer.deserialize(result);
+            result = dbInfo.serializer.deserialize(
+                crypto.decrypt(result, self._dbInfo.secret)
+            );
         }
 
         return result;
@@ -125,7 +128,7 @@ function iterate(iterator, callback) {
         // the `iterationNumber` argument passed to the `iterate()`
         // callback.
         //
-        // See: github.com/mozilla/localForage/pull/435#discussion_r38061530
+        // See: github.com/mozilla/cryptedForage/pull/435#discussion_r38061530
         var iterationNumber = 1;
 
         for (var i = 0; i < length; i++) {
@@ -241,7 +244,7 @@ function setItem(key, value, callback) {
 
     var promise = self.ready().then(function() {
         // Convert undefined values to null.
-        // https://github.com/mozilla/localForage/pull/42
+        // https://github.com/mozilla/cryptedForage/pull/42
         if (value === undefined) {
             value = null;
         }
@@ -256,6 +259,7 @@ function setItem(key, value, callback) {
                     reject(error);
                 } else {
                     try {
+                        value = crypto.encrypt(value, self._dbInfo.secret);
                         localStorage.setItem(dbInfo.keyPrefix + key, value);
                         resolve(originalValue);
                     } catch (e) {

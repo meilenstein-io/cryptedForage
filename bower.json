@@ -1,7 +1,7 @@
 {
-  "name": "localforage",
+  "name": "cryptedforage",
   "main": [
-    "dist/localforage.js"
+    "dist/cryptedforage.js"
   ],
   "ignore": [
     ".travis.yml",

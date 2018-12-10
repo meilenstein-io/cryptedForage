@@ -13,7 +13,7 @@
     "target": "es5"
   },
   "files": [
-    "../typings/localforage.d.ts",
-    "./localforage-tests.ts"
+    "../typings/cryptedforage.d.ts",
+    "./cryptedforage-tests.ts"
   ]
 }

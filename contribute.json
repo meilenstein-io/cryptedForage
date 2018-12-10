@@ -1,23 +1,23 @@
 {
-    "name": "localforage",
+    "name": "cryptedforage",
     "description": "Offline storage, improved. Wraps IndexedDB, WebSQL, or localStorage using a simple but powerful API.",
     "repository": {
-        "url": "https://github.com/mozilla/localForage",
+        "url": "https://github.com/mozilla/cryptedForage",
         "license": "Apache 2.0",
-        "tests": "https://travis-ci.org/mozilla/localForage"
+        "tests": "https://travis-ci.org/mozilla/cryptedForage"
     },
     "participate": {
-        "home": "https://github.com/mozilla/localForage",
-        "docs": "http://mozilla.github.io/localForage",
+        "home": "https://github.com/mozilla/cryptedForage",
+        "docs": "http://mozilla.github.io/cryptedForage",
         "irc": "irc://irc.mozilla.org/#apps",
         "irc-contacts": [
             "tofumatt"
         ]
     },
     "bugs": {
-        "list": "https://github.com/mozilla/localForage/issues",
-        "report": "https://github.com/mozilla/localForage/issues/new",
-        "goodfirstbug": "https://github.com/mozilla/localForage/labels/help%20wanted"
+        "list": "https://github.com/mozilla/cryptedForage/issues",
+        "report": "https://github.com/mozilla/cryptedForage/issues/new",
+        "goodfirstbug": "https://github.com/mozilla/cryptedForage/labels/help%20wanted"
 
     },
     "keywords": [

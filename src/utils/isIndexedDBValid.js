@@ -26,14 +26,14 @@ function isIndexedDBValid() {
         // Safari 10.1 shipped with fetch, we can use that to detect it.
         // Note: this creates issues with `window.fetch` polyfills and
         // overrides; see:
-        // https://github.com/localForage/localForage/issues/856
+        // https://github.com/cryptedForage/cryptedForage/issues/856
         return (
             (!isSafari || hasFetch) &&
             typeof indexedDB !== 'undefined' &&
             // some outdated implementations of IDB that appear on Samsung
             // and HTC Android devices <4.4 are missing IDBKeyRange
-            // See: https://github.com/mozilla/localForage/issues/128
-            // See: https://github.com/mozilla/localForage/issues/272
+            // See: https://github.com/mozilla/cryptedForage/issues/128
+            // See: https://github.com/mozilla/cryptedForage/issues/272
             typeof IDBKeyRange !== 'undefined'
         );
     } catch (e) {

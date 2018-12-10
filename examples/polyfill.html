@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf8" />
-    <title>Simple localForage example</title>
+    <title>Simple cryptedForage example</title>
   </head>
   <body>
     <div id="output"></div>
@@ -12,7 +12,7 @@
         window.Promise = undefined;
       }
     </script>
-    <script src="../dist/localforage.js"></script>
+    <script src="../dist/cryptedforage.js"></script>
     <script>
       function log() {
         try {
@@ -36,15 +36,15 @@
       // var value = undefined;
       var UNKNOWN_KEY = 'unknown_key';
 
-      localforage.setItem(key, value, function() {
+      cryptedforage.setItem(key, value, function() {
         log('Saved: ' + value);
 
-        localforage.getItem(key, function(err, readValue) {
+        cryptedforage.getItem(key, function(err, readValue) {
           log('Read: ', readValue);
         });
 
         // Since this key hasn't been set yet, we'll get a null value
-        localforage.getItem(UNKNOWN_KEY, function(err, readValue) {
+        cryptedforage.getItem(UNKNOWN_KEY, function(err, readValue) {
           log('Result of reading ' + UNKNOWN_KEY, readValue);
         });
       });

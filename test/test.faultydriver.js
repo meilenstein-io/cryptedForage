@@ -3,17 +3,17 @@ describe('When Driver Fails to Initialize', function() {
     'use strict';
 
     var FAULTYDRIVERS = [
-        localforage.INDEXEDDB,
-        localforage.WEBSQL,
-        localforage.LOCALSTORAGE
+        cryptedforage.INDEXEDDB,
+        cryptedforage.WEBSQL,
+        cryptedforage.LOCALSTORAGE
     ]
-        .filter(localforage.supports)
+        .filter(cryptedforage.supports)
         .filter(function(driverName) {
             // FF doesn't allow you to override `localStorage.setItem`
             // so if the faulty driver setup didn't succeed
             // then skip the localStorage tests
             return !(
-                driverName === localforage.LOCALSTORAGE &&
+                driverName === cryptedforage.LOCALSTORAGE &&
                 localStorage.setItem.toString().indexOf('[native code]') >= 0
             );
         });
@@ -21,7 +21,7 @@ describe('When Driver Fails to Initialize', function() {
     FAULTYDRIVERS.forEach(function(driverName) {
         describe(driverName, function() {
             beforeEach(function() {
-                if (driverName === localforage.LOCALSTORAGE) {
+                if (driverName === cryptedforage.LOCALSTORAGE) {
                     localStorage.clear();
                 }
             });
@@ -29,8 +29,8 @@ describe('When Driver Fails to Initialize', function() {
             it('fails to setDriver ' + driverName + ' [callback]', function(
                 done
             ) {
-                localforage.setDriver(driverName, function() {
-                    localforage.ready(function(err) {
+                cryptedforage.setDriver(driverName, function() {
+                    cryptedforage.ready(function(err) {
                         expect(err).to.be.an(Error);
                         expect(err.message).to.be(
                             'No available storage method found.'
@@ -43,10 +43,10 @@ describe('When Driver Fails to Initialize', function() {
             it('fails to setDriver ' + driverName + ' [promise]', function(
                 done
             ) {
-                localforage
+                cryptedforage
                     .setDriver(driverName)
                     .then(function() {
-                        return localforage.ready();
+                        return cryptedforage.ready();
                     })
                     .then(null, function(err) {
                         expect(err).to.be.an(Error);

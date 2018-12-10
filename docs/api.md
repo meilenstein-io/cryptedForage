@@ -1,4 +1,4 @@
-# localForage
+# cryptedForage
 
 **Offline storage, improved.**
 
@@ -7,42 +7,42 @@
 localStorage.setItem('key', JSON.stringify('value'));
 doSomethingElse();
 
-// The same code with localForage:
-localforage.setItem('key', 'value').then(doSomethingElse);
+// The same code with cryptedForage:
+cryptedforage.setItem('key', 'value').then(doSomethingElse);
 
-// localForage also support callbacks:
-localforage.setItem('key', 'value', doSomethingElse);
+// cryptedForage also support callbacks:
+cryptedforage.setItem('key', 'value', doSomethingElse);
 ```
 
-localForage is a JavaScript library that improves the offline experience of your web app by using an asynchronous data store with a simple, `localStorage`-like API. It allows developers to [store many types of data](#data-api-setitem) instead of just strings.
+cryptedForage is a JavaScript library that improves the offline experience of your web app by using an asynchronous data store with a simple, `localStorage`-like API. It allows developers to [store many types of data](#data-api-setitem) instead of just strings.
 
-localForage includes a localStorage-backed fallback store for browsers with no IndexedDB or WebSQL support. Asynchronous storage is available in the current versions of all major browsers: Chrome, Firefox, IE, and Safari (including Safari Mobile).
+cryptedForage includes a localStorage-backed fallback store for browsers with no IndexedDB or WebSQL support. Asynchronous storage is available in the current versions of all major browsers: Chrome, Firefox, IE, and Safari (including Safari Mobile).
 
-**localForage offers a callback API as well as support for the [ES6 Promises API][]**, so you can use whichever you prefer.
+**cryptedForage offers a callback API as well as support for the [ES6 Promises API][]**, so you can use whichever you prefer.
 
-[Download localforage.min.js][download]
+[Download cryptedforage.min.js][download]
 
-[download]: https://raw.githubusercontent.com/mozilla/localForage/master/dist/localforage.min.js
+[download]: https://raw.githubusercontent.com/mozilla/cryptedForage/master/dist/cryptedforage.min.js
 [ES6 Promises API]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise
 
 # Installation
 
 ```bash
 # Install via npm:
-npm install localforage
+npm install cryptedforage
 
 # Or with bower:
-bower install localforage
+bower install cryptedforage
 ```
 
 ```html
-<script src="localforage.js"></script>
-<script>console.log('localforage is: ', localforage);</script>
+<script src="cryptedforage.js"></script>
+<script>console.log('cryptedforage is: ', cryptedforage);</script>
 ```
 
-To use localForage, [download the latest release](https://github.com/mozilla/localForage/releases) or install with [npm](https://www.npmjs.org/) (`npm install localforage`) or [bower](http://bower.io/) (`bower install localforage`).
+To use cryptedForage, [download the latest release](https://github.com/mozilla/cryptedForage/releases) or install with [npm](https://www.npmjs.org/) (`npm install cryptedforage`) or [bower](http://bower.io/) (`bower install cryptedforage`).
 
-Then simply include the JS file and start using localForage: `<script src="localforage.js"></script>`. You don't need to run any init method or wait for any `onready` events.
+Then simply include the JS file and start using cryptedForage: `<script src="cryptedforage.js"></script>`. You don't need to run any init method or wait for any `onready` events.
 
 # Data API
 
@@ -51,7 +51,7 @@ These APIs deal with getting and setting data in the offline store.
 ## getItem
 
 ```js
-localforage.getItem('somekey').then(function(value) {
+cryptedforage.getItem('somekey').then(function(value) {
     // This code runs once the value has been loaded
     // from the offline store.
     console.log(value);
@@ -61,7 +61,7 @@ localforage.getItem('somekey').then(function(value) {
 });
 
 // Callback version:
-localforage.getItem('somekey', function(err, value) {
+cryptedforage.getItem('somekey', function(err, value) {
     // Run this code once the value has been
     // loaded from the offline store.
     console.log(value);
@@ -73,13 +73,13 @@ localforage.getItem('somekey', function(err, value) {
 Gets an item from the storage library and supplies the result to a callback. If the key does not exist, `getItem()` will return `null`.
 
 <aside class="notice">
-  Even if `undefined` is saved, `null` will be returned by `getItem()`. This is due to a [limitation in localStorage](https://github.com/mozilla/localForage/pull/42), and for compatibility reasons localForage cannot store the value `undefined`.
+  Even if `undefined` is saved, `null` will be returned by `getItem()`. This is due to a [limitation in localStorage](https://github.com/mozilla/cryptedForage/pull/42), and for compatibility reasons cryptedForage cannot store the value `undefined`.
 </aside>
 
 ## setItem
 
 ```js
-localforage.setItem('somekey', 'some value').then(function (value) {
+cryptedforage.setItem('somekey', 'some value').then(function (value) {
     // Do other things once the value has been saved.
     console.log(value);
 }).catch(function(err) {
@@ -88,7 +88,7 @@ localforage.setItem('somekey', 'some value').then(function (value) {
 });
 
 // Unlike localStorage, you can store non-strings.
-localforage.setItem('my array', [1, 2, 'three']).then(function(value) {
+cryptedforage.setItem('my array', [1, 2, 'three']).then(function(value) {
     // This will output `1`.
     console.log(value[0]);
 }).catch(function(err) {
@@ -103,7 +103,7 @@ req.responseType = 'arraybuffer';
 
 req.addEventListener('readystatechange', function() {
     if (req.readyState === 4) { // readyState DONE
-        localforage.setItem('photo', req.response).then(function(image) {
+        cryptedforage.setItem('photo', req.response).then(function(image) {
             // This will be a valid blob URI for an <img> tag.
             var blob = new Blob([image]);
             var imageURI = window.URL.createObjectURL(blob);
@@ -144,7 +144,7 @@ Saves data to an offline store. You can store the following types of JavaScript 
 ## removeItem
 
 ```js
-localforage.removeItem('somekey').then(function() {
+cryptedforage.removeItem('somekey').then(function() {
     // Run this code once the key has been removed.
     console.log('Key is cleared!');
 }).catch(function(err) {
@@ -162,7 +162,7 @@ Removes the value of a key from the offline store.
 ## clear
 
 ```js
-localforage.clear().then(function() {
+cryptedforage.clear().then(function() {
     // Run this code once the database has been entirely deleted.
     console.log('Database is now empty.');
 }).catch(function(err) {
@@ -176,13 +176,13 @@ localforage.clear().then(function() {
 Removes every key from the database, returning it to a blank slate.
 
 <aside class="warning">
-  `localforage.clear()` will remove **every item in the offline store**. Use this method with caution.
+  `cryptedforage.clear()` will remove **every item in the offline store**. Use this method with caution.
 </aside>
 
 ## length
 
 ```js
-localforage.length().then(function(numberOfKeys) {
+cryptedforage.length().then(function(numberOfKeys) {
     // Outputs the length of the database.
     console.log(numberOfKeys);
 }).catch(function(err) {
@@ -198,7 +198,7 @@ Gets the number of keys in the offline store (i.e. its "length").
 ## key
 
 ```js
-localforage.key(2).then(function(keyName) {
+cryptedforage.key(2).then(function(keyName) {
     // Name of the key.
     console.log(keyName);
 }).catch(function(err) {
@@ -218,7 +218,7 @@ Get the name of a key based on its ID.
 ## keys
 
 ```js
-localforage.keys().then(function(keys) {
+cryptedforage.keys().then(function(keys) {
     // An array of all the key names.
     console.log(keys);
 }).catch(function(err) {
@@ -235,7 +235,7 @@ Get the list of all keys in the datastore.
 
 ```js
 // The same code, but using ES6 Promises.
-localforage.iterate(function(value, key, iterationNumber) {
+cryptedforage.iterate(function(value, key, iterationNumber) {
     // Resulting key/value pair -- this callback
     // will be executed for every item in the
     // database.
@@ -248,7 +248,7 @@ localforage.iterate(function(value, key, iterationNumber) {
 });
 
 // Exit the iteration early:
-localforage.iterate(function(value, key, iterationNumber) {
+cryptedforage.iterate(function(value, key, iterationNumber) {
     if (iterationNumber < 3) {
         console.log([key, value]);
     } else {
@@ -281,16 +281,16 @@ Iterate over all value/key pairs in datastore.
 
 # Settings API
 
-These methods allow driver selection and database configuration. These methods should generally be called before the first _data_ API call to localForage (i.e. before you call `getItem()` or `length()`, etc.)
+These methods allow driver selection and database configuration. These methods should generally be called before the first _data_ API call to cryptedForage (i.e. before you call `getItem()` or `length()`, etc.)
 
 ## setDriver
 
 ```js
 // Force localStorage to be the backend driver.
-localforage.setDriver(localforage.LOCALSTORAGE);
+cryptedforage.setDriver(cryptedforage.LOCALSTORAGE);
 
 // Supply a list of drivers, in order of preference.
-localforage.setDriver([localforage.WEBSQL, localforage.INDEXEDDB]);
+cryptedforage.setDriver([cryptedforage.WEBSQL, cryptedforage.INDEXEDDB]);
 ```
 
 `setDriver(driverName)`<br>
@@ -298,7 +298,7 @@ localforage.setDriver([localforage.WEBSQL, localforage.INDEXEDDB]);
 
 Force usage of a particular driver or drivers, if available.
 
-By default, localForage selects backend drivers for the datastore in this order:
+By default, cryptedForage selects backend drivers for the datastore in this order:
 
 1. IndexedDB
 2. WebSQL
@@ -306,54 +306,54 @@ By default, localForage selects backend drivers for the datastore in this order:
 
 If you would like to force usage of a particular driver you can use `setDriver()` with one or more of the following arguments:
 
-* `localforage.INDEXEDDB`
-* `localforage.WEBSQL`
-* `localforage.LOCALSTORAGE`
+* `cryptedforage.INDEXEDDB`
+* `cryptedforage.WEBSQL`
+* `cryptedforage.LOCALSTORAGE`
 
 <aside class="notice">
-  If the backend you're trying to load isn't available on the user's browser, localForage will continue to use whatever backend driver it was previously using. This means that if you try to force a Gecko browser to use WebSQL, it will fail and continue using IndexedDB.
+  If the backend you're trying to load isn't available on the user's browser, cryptedForage will continue to use whatever backend driver it was previously using. This means that if you try to force a Gecko browser to use WebSQL, it will fail and continue using IndexedDB.
 </aside>
 
 ## config
 
 ```js
-// This will rename the database from "localforage"
+// This will rename the database from "cryptedforage"
 // to "Hipster PDA App".
-localforage.config({
+cryptedforage.config({
     name: 'Hipster PDA App'
 });
 
 // This will force localStorage as the storage
 // driver even if another is available. You can
 // use this instead of `setDriver()`.
-localforage.config({
-    driver: localforage.LOCALSTORAGE,
+cryptedforage.config({
+    driver: cryptedforage.LOCALSTORAGE,
     name: 'I-heart-localStorage'
 });
 
 // This will use a different driver order.
-localforage.config({
-    driver: [localforage.WEBSQL,
-             localforage.INDEXEDDB,
-             localforage.LOCALSTORAGE],
+cryptedforage.config({
+    driver: [cryptedforage.WEBSQL,
+             cryptedforage.INDEXEDDB,
+             cryptedforage.LOCALSTORAGE],
     name: 'WebSQL-Rox'
 });
 ```
 
 `config(options)`
 
-Set and persist localForage options. This must be called *before* any other calls to localForage are made, but can be called after localForage is loaded. If you set any config values with this method they will persist after driver changes, so you can call `config()` then `setDriver()`. The following config values can be set:
+Set and persist cryptedForage options. This must be called *before* any other calls to cryptedForage are made, but can be called after cryptedForage is loaded. If you set any config values with this method they will persist after driver changes, so you can call `config()` then `setDriver()`. The following config values can be set:
 
 <dl>
   <dt>driver</dt>
   <dd>
     The preferred driver(s) to use. Same format as what is passed to <a href="#settings-api-setdriver"><code>setDriver</code></a>, above.<br>
-    Default: <code>[localforage.INDEXEDDB, localforage.WEBSQL, localforage.LOCALSTORAGE]</code>
+    Default: <code>[cryptedforage.INDEXEDDB, cryptedforage.WEBSQL, cryptedforage.LOCALSTORAGE]</code>
   </dd>
   <dt>name</dt>
   <dd>
     The name of the database. May appear during storage limit prompts. Useful to use the name of your app here. In localStorage, this is used as a key prefix for all keys stored in localStorage.<br>
-    Default: <code>'localforage'</code>
+    Default: <code>'cryptedforage'</code>
   </dd>
   <dt>size</dt>
   <dd>
@@ -367,7 +367,7 @@ Set and persist localForage options. This must be called *before* any other call
   </dd>
   <dt>version</dt>
   <dd>
-    The schema version of your database. Used only in WebSQL and IndexedDB. In WebSQL, this simply sets the version, and in IndexedDB this may trigger an <code>onupgradeneeded</code> event if a version upgrade is detected. If a new store is detected, localForage will ask IndexedDB to increment the version itself to manually trigger the <code>onupgradeneeded</code> event. As of right now, upgrade events are not customizable, but may be in the future. For drivers that do not support configuration for versioning, this value simply gets thrown away.<br>
+    The schema version of your database. Used only in WebSQL and IndexedDB. In WebSQL, this simply sets the version, and in IndexedDB this may trigger an <code>onupgradeneeded</code> event if a version upgrade is detected. If a new store is detected, cryptedForage will ask IndexedDB to increment the version itself to manually trigger the <code>onupgradeneeded</code> event. As of right now, upgrade events are not customizable, but may be in the future. For drivers that do not support configuration for versioning, this value simply gets thrown away.<br>
     Default: <code>1.0</code>
   </dd>
   <dt>description</dt>
@@ -378,12 +378,12 @@ Set and persist localForage options. This must be called *before* any other call
 </dl>
 
 <aside class="notice">
-  Unlike most of the localForage API, the <code>config</code> method is synchronous.
+  Unlike most of the cryptedForage API, the <code>config</code> method is synchronous.
 </aside>
 
 # Driver API
 
-You can write your own, custom driver for localForage since **version 1.1**.
+You can write your own, custom driver for cryptedForage since **version 1.1**.
 
 ## defineDriver
 
@@ -420,8 +420,8 @@ var myCustomDriver = {
     }
 }
 
-// Add the driver to localForage.
-localforage.defineDriver(myCustomDriver);
+// Add the driver to cryptedForage.
+cryptedforage.defineDriver(myCustomDriver);
 ```
 
 You'll want to make sure you accept a `callback` argument and that you pass the same arguments to callbacks as the default drivers do. You'll also want to resolve or reject promises. Check any of the [default drivers][] for an idea of how to implement your own, custom driver.
@@ -429,15 +429,15 @@ You'll want to make sure you accept a `callback` argument and that you pass the 
 The custom implementation may contain a `_support` property that is either boolean (`true`/`false`) or returns a `Promise` that resolves to a boolean value. If `_support` is omitted, then `true` is the default value. You can use this to make sure the browser in use supports your custom driver.
 
 <aside class="notice">
-  These drivers are available to every instance of localForage on the page, regardless of which instance you use to add the implementation.
+  These drivers are available to every instance of cryptedForage on the page, regardless of which instance you use to add the implementation.
 </aside>
 
-[default drivers]: https://github.com/mozilla/localForage/tree/master/src/drivers
+[default drivers]: https://github.com/mozilla/cryptedForage/tree/master/src/drivers
 
 ## driver
 
 ```js
-localforage.driver();
+cryptedforage.driver();
 // "asyncStorage"
 ```
 
@@ -446,16 +446,16 @@ localforage.driver();
 Returns the name of the driver being used, `null` during the asynchronous driver initialization process (see <a href="#driver-api-ready"><code>ready</code></a> for more details), or `null` if the asynchronous driver initialization process failed to find a usable driver.
 
 <aside class="notice">
-  In case that a driver fails during or right after the initialization process, then localForage will try to use the next in order driver. That is with respect to the default driver order while loading localForage or to the order the drivers were passed to `setDriver()`.
+  In case that a driver fails during or right after the initialization process, then cryptedForage will try to use the next in order driver. That is with respect to the default driver order while loading cryptedForage or to the order the drivers were passed to `setDriver()`.
 </aside>
 
 ## ready
 
 ```js
-localforage.ready().then(function() {
-    // This code runs once localforage
+cryptedforage.ready().then(function() {
+    // This code runs once cryptedforage
     // has fully initialized the selected driver.
-    console.log(localforage.driver()); // LocalStorage
+    console.log(cryptedforage.driver()); // LocalStorage
 }).catch(function (e) {
     console.log(e); // `No available storage method found.`
     // One of the cases that `ready()` rejects,
@@ -463,12 +463,12 @@ localforage.ready().then(function() {
 });
 ```
 
-Even though localForage queues up all of its data API method calls, `ready()` provides a way to determine whether the asynchronous driver initialization process has finished. That's useful in cases like when we want to know which driver localForage has settled down using.
+Even though cryptedForage queues up all of its data API method calls, `ready()` provides a way to determine whether the asynchronous driver initialization process has finished. That's useful in cases like when we want to know which driver cryptedForage has settled down using.
 
 ## supports
 
 ```js
-localforage.supports(localforage.INDEXEDDB);
+cryptedforage.supports(cryptedforage.INDEXEDDB);
 // true
 ```
 
@@ -480,16 +480,16 @@ See <a href="#settings-api-setdriver"><code>setDriver</code></a> for default dri
 
 # Multiple Instances
 
-You can create multiple instances of localForage that point to different stores. All the configuration options used by [config](#config) are supported.
+You can create multiple instances of cryptedForage that point to different stores. All the configuration options used by [config](#config) are supported.
 
 ## createInstance
 
 ```js
-var store = localforage.createInstance({
+var store = cryptedforage.createInstance({
   name: "nameHere"
 });
 
-var otherStore = localforage.createInstance({
+var otherStore = cryptedforage.createInstance({
   name: "otherName"
 });
 
@@ -498,23 +498,23 @@ store.setItem("key", "value");
 otherStore.setItem("key", "value2");
 ```
 
-Creates a new instance of localForage and returns it. Each object contains its own database and doesn't affect other instances of localForage.
+Creates a new instance of cryptedForage and returns it. Each object contains its own database and doesn't affect other instances of cryptedForage.
 
 ## dropInstance
 
 ```js
-localforage.dropInstance().then(function() {
+cryptedforage.dropInstance().then(function() {
   console.log('Dropped the store of the current instance').
 });
 
-localforage.dropInstance({
+cryptedforage.dropInstance({
   name: "otherName",
   storeName: "otherStore"
 }).then(function() {
   console.log('Dropped otherStore').
 });
 
-localforage.dropInstance({
+cryptedforage.dropInstance({
   name: "otherName"
 }).then(function() {
   console.log('Dropped otherName database').

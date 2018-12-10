@@ -7,9 +7,10 @@ import executeCallback from './utils/executeCallback';
 import executeTwoCallbacks from './utils/executeTwoCallbacks';
 import includes from './utils/includes';
 import isArray from './utils/isArray';
+import generateSecret from './utils/generateSecret';
 
 // Drivers are stored here when `defineDriver()` is called.
-// They are shared across all instances of localForage.
+// They are shared across all instances of cryptedForage.
 const DefinedDrivers = {};
 
 const DriverSupport = {};
@@ -42,20 +43,21 @@ const LibraryMethods = [
 const DefaultConfig = {
     description: '',
     driver: DefaultDriverOrder.slice(),
-    name: 'localforage',
+    name: 'cryptedforage',
     // Default DB size is _JUST UNDER_ 5MB, as it's the highest size
     // we can use without a prompt.
     size: 4980736,
     storeName: 'keyvaluepairs',
-    version: 1.0
+    version: 1.0,
+    secret: generateSecret(32)
 };
 
-function callWhenReady(localForageInstance, libraryMethod) {
-    localForageInstance[libraryMethod] = function() {
+function callWhenReady(cryptedForageInstance, libraryMethod) {
+    cryptedForageInstance[libraryMethod] = function() {
         const _args = arguments;
-        return localForageInstance.ready().then(function() {
-            return localForageInstance[libraryMethod].apply(
-                localForageInstance,
+        return cryptedForageInstance.ready().then(function() {
+            return cryptedForageInstance[libraryMethod].apply(
+                cryptedForageInstance,
                 _args
             );
         });
@@ -82,7 +84,7 @@ function extend() {
     return arguments[0];
 }
 
-class LocalForage {
+class CryptedForage {
     constructor(options) {
         for (let driverTypeKey in DefaultDrivers) {
             if (DefaultDrivers.hasOwnProperty(driverTypeKey)) {
@@ -110,7 +112,7 @@ class LocalForage {
         this.setDriver(this._config.driver).catch(() => {});
     }
 
-    // Set any config values for localForage; can be called anytime before
+    // Set any config values for cryptedForage; can be called anytime before
     // the first API call (e.g. `getItem`, `setItem`).
     // We loop through options so we don't overwrite existing config
     // values.
@@ -119,11 +121,12 @@ class LocalForage {
         // Otherwise, we return either a specified config value or all
         // config values.
         if (typeof options === 'object') {
-            // If localforage is ready and fully initialized, we can't set
+            // If cryptedforage is ready and fully initialized, we can't set
             // any new configuration values. Instead, we return an error.
             if (this._ready) {
                 return new Error(
-                    "Can't call config() after localforage " + 'has been used.'
+                    "Can't call config() after cryptedforage " +
+                        'has been used.'
                 );
             }
 
@@ -154,14 +157,14 @@ class LocalForage {
     }
 
     // Used to define a custom driver, shared across all instances of
-    // localForage.
+    // cryptedForage.
     defineDriver(driverObject, callback, errorCallback) {
         const promise = new Promise(function(resolve, reject) {
             try {
                 const driverName = driverObject._driver;
                 const complianceError = new Error(
                     'Custom driver not compliant; see ' +
-                        'https://mozilla.github.io/localForage/#definedriver'
+                        'https://mozilla.github.io/cryptedForage/#definedriver'
                 );
 
                 // A driver name should be defined and not overlap with the
@@ -226,7 +229,7 @@ class LocalForage {
                 const setDriverSupport = function(support) {
                     if (DefinedDrivers[driverName]) {
                         console.info(
-                            `Redefining LocalForage driver: ${driverName}`
+                            `Redefining CryptedForage driver: ${driverName}`
                         );
                     }
                     DefinedDrivers[driverName] = driverObject;
@@ -396,7 +399,7 @@ class LocalForage {
 
     _wrapLibraryMethodsWithReady() {
         // Add a stub for each driver API method that delays the call to the
-        // corresponding driver method until localForage is ready. These stubs
+        // corresponding driver method until cryptedForage is ready. These stubs
         // will be replaced by the driver methods as soon as the driver is
         // loaded, so there is no performance impact.
         for (let i = 0, len = LibraryMethods.length; i < len; i++) {
@@ -405,10 +408,10 @@ class LocalForage {
     }
 
     createInstance(options) {
-        return new LocalForage(options);
+        return new CryptedForage(options);
     }
 }
 
-// The actual localForage object that we expose as a module or via a
+// The actual cryptedForage object that we expose as a module or via a
 // global. It's extended by pulling in one of our other libraries.
-export default new LocalForage();
+export default new CryptedForage();

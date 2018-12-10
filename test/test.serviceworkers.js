@@ -1,15 +1,16 @@
 /* global navigator:true, window:true, Modernizr:true, describe:true, expect:true, it:true, xit:true, before:true, beforeEach:true, after:true*/
 var DRIVERS = [
-    localforage.INDEXEDDB,
-    localforage.LOCALSTORAGE,
-    localforage.WEBSQL
+    cryptedforage.INDEXEDDB,
+    cryptedforage.LOCALSTORAGE,
+    cryptedforage.WEBSQL
 ];
 
 DRIVERS.forEach(function(driverName) {
     if (
-        (!Modernizr.indexeddb && driverName === localforage.INDEXEDDB) ||
-        (!Modernizr.localstorage && driverName === localforage.LOCALSTORAGE) ||
-        (!Modernizr.websqldatabase && driverName === localforage.WEBSQL)
+        (!Modernizr.indexeddb && driverName === cryptedforage.INDEXEDDB) ||
+        (!Modernizr.localstorage &&
+            driverName === cryptedforage.LOCALSTORAGE) ||
+        (!Modernizr.websqldatabase && driverName === cryptedforage.WEBSQL)
     ) {
         // Browser doesn't support this storage library, so we exit the API
         // tests.
@@ -44,7 +45,7 @@ DRIVERS.forEach(function(driverName) {
             navigator.serviceWorker
                 .register('/test/serviceworker-client.js')
                 .then(function() {
-                    return localforage.setDriver(driverName);
+                    return cryptedforage.setDriver(driverName);
                 })
                 .then(done);
         });
@@ -64,12 +65,12 @@ DRIVERS.forEach(function(driverName) {
         });
 
         beforeEach(function(done) {
-            localforage.clear(done);
+            cryptedforage.clear(done);
         });
 
         if (
-            driverName === localforage.LOCALSTORAGE ||
-            driverName === localforage.WEBSQL
+            driverName === cryptedforage.LOCALSTORAGE ||
+            driverName === cryptedforage.WEBSQL
         ) {
             it.skip(driverName + ' is not supported in service workers');
             return;
@@ -78,7 +79,7 @@ DRIVERS.forEach(function(driverName) {
         xit('should set a value on registration', function(done) {
             navigator.serviceWorker.ready
                 .then(function() {
-                    return localforage.getItem('service worker registration');
+                    return cryptedforage.getItem('service worker registration');
                 })
                 .then(function(result) {
                     expect(result).to.equal('serviceworker present');

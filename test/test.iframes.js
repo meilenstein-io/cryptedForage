@@ -18,7 +18,7 @@ describe('Inside iFrames', function() {
         iFrame.parentNode.removeChild(iFrame);
     });
 
-    it('can run localForage in an iFrame', function(done) {
+    it('can run cryptedForage in an iFrame', function(done) {
         var timer = setInterval(function() {
             var element = window.document
                 .getElementById('iframe')

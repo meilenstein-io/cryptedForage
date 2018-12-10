@@ -197,7 +197,7 @@ function deserialize(value) {
 
     var blobType;
     // Backwards-compatible blob type serialization strategy.
-    // DBs created with older versions of localForage will simply not have the blob type.
+    // DBs created with older versions of cryptedForage will simply not have the blob type.
     if (type === TYPE_BLOB && BLOB_TYPE_PREFIX_REGEX.test(serializedString)) {
         var matcher = serializedString.match(BLOB_TYPE_PREFIX_REGEX);
         blobType = matcher[1];
@@ -235,11 +235,11 @@ function deserialize(value) {
     }
 }
 
-var localforageSerializer = {
+var cryptedforageSerializer = {
     serialize: serialize,
     deserialize: deserialize,
     stringToBuffer: stringToBuffer,
     bufferToString: bufferToString
 };
 
-export default localforageSerializer;
+export default cryptedforageSerializer;
